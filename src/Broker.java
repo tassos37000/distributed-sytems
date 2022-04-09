@@ -1,6 +1,7 @@
 import java.util.*;
 //import java.io.*;
 import java.net.*;
+import javafx.util.Pair;
 
 public class Broker extends Node {
     List<Consumer> registeredUsers;
@@ -56,19 +57,19 @@ public class Broker extends Node {
         return pub;
     }
 
-    // public void calculateKeys(){
-    //     ArrayList<Address> brokerList = getBrokerList();
-    //     ArrayList<Pair<Address,Integer>> brokerHash = new ArrayList<new Pair<>>();
-    //     for (Address ad : brokerList){
-    //         brokerHash.add(Pair(ad,(ad.getIp()+ad.getPort()).hashCode()));
-    //     }
-    //     //TODO: sort by the hash
-    // }
+    public void calculateKeys(){
+        ArrayList<Address> brokerList = getBrokerList();
+        ArrayList<Pair<Address,Integer>>brokerHash = new ArrayList<>();
+        for (Address ad : brokerList){
+            brokerHash.add( (new Pair <Address,Integer> (ad,(ad.getIp()+ad.getPort()).hashCode())));
+        }
+        //TODO: sort by the hash
+    }
 
-    // public void filterConsumers(String f_con){
-    //     int conHash = f_con.hashCode();
+    public void filterConsumers(String f_con){
+        int conHash = f_con.hashCode();
 
-    // }
+    }
 
     public void notifyBrokersOnChanges(){}
 
