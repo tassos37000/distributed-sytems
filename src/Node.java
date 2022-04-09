@@ -1,6 +1,7 @@
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.net.Socket;
 
 public class Node implements Serializable {
     //Broker Addresses (ip, port)
@@ -21,7 +22,12 @@ public class Node implements Serializable {
 
     public void connect(){}
     public void disconnect(){}
-    public void init(int n){}
+
+    public void init(int n){
+        System.out.println("[Node]: Created new.");
+        
+    }
+
     public void updateNodes(){}
 
 }

@@ -1,4 +1,5 @@
-public class MultimediaFile {
+import java.io.Serializable;
+public class MultimediaFile implements Serializable {
     String multimediaFileName;
     String profileName;
     String dateCreated;
