@@ -70,7 +70,13 @@ public class Broker extends Node {
         for (Address ad : brokerList){
             brokerHash.add((new Pair<Address,Integer> (ad,(ad.getIp()+ad.getPort()).hashCode())));
         }
-        //TODO: sort by the hash
+        // Sort brokers
+        Collections.sort(brokerHash, new Comparator<Pair<Address, Integer>>() {
+            @Override 
+            public int compare(final Pair<Address, Integer> left, final Pair<Address, Integer> right) {
+                return left.getValue() - right.getValue();
+            }
+        });
         //TODO: read topics from file
         ArrayList<String> topics = new ArrayList<>(Arrays.asList("Topic1","Chattt","idk some name"));
         topicHash = new ArrayList<>();
