@@ -1,8 +1,14 @@
-import java.util.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javafx.util.Pair;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Broker extends Node {
     //List<Consumer> registeredUsers;
@@ -65,7 +71,7 @@ public class Broker extends Node {
     // }
 
     public void calculateKeys(){
-        ArrayList<Address> brokerList = getBrokerList();
+        ArrayList<Address> brokerList = readAddresses();
         brokerHash = new ArrayList<>();
         for (Address ad : brokerList){
             brokerHash.add((new Pair<Address,Integer> (ad,(ad.getIp()+ad.getPort()).hashCode())));
@@ -77,8 +83,7 @@ public class Broker extends Node {
                 return left.getValue() - right.getValue();
             }
         });
-        //TODO: read topics from file
-        ArrayList<String> topics = new ArrayList<>(Arrays.asList("Topic1","Chattt","idk some name"));
+        ArrayList<String> topics = readTopics();
         topicHash = new ArrayList<>();
         for (String t : topics){
             topicHash.add((new Pair<String,Integer> (t, t.hashCode())));
@@ -99,5 +104,29 @@ public class Broker extends Node {
     public void notifyPublisher(String n_pub){}
 
     public void pull(String str){}
+
+    /**
+     * Helper method to read topic names from configuration file.
+     * @return Arraylist with topic names.
+     */
+    private ArrayList<String> readTopics(){
+        ArrayList<String> topics = new ArrayList<String>();
+        try {
+            File confFile = new File("src\\conf.txt");
+            Scanner confReader = new Scanner(confFile);
+            String line = confReader.nextLine();
+            while (confReader.hasNextLine() && line != "%") {
+                line = confReader.nextLine();
+            }
+            while (confReader.hasNextLine()){
+                line = confReader.nextLine();
+                topics.add(line);
+            }
+            confReader.close();
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return topics;
+    }
 }
 

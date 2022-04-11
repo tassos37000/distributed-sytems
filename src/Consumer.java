@@ -2,8 +2,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
-public class Consumer {
+public class Consumer extends Node {
     public void disconnect(String str){}
 
     public void register(String str){}
@@ -12,7 +14,10 @@ public class Consumer {
         Socket requestSocket = null;
         ObjectInputStream in = null;
         try{
-            requestSocket = new Socket("192.168.1.4", 6000); //TODO: sent to random
+            ArrayList<Address> brokerAddresses = readAddresses();
+            int rnd = new Random().nextInt(brokerAddresses.size());
+            requestSocket = new Socket(brokerAddresses.get(rnd).getIp(), 
+                                       brokerAddresses.get(rnd).getPort());
             in = new ObjectInputStream(requestSocket.getInputStream());
             System.out.println("<Server>" + in.readObject());
         } catch (UnknownHostException unknownHost) {
