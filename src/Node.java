@@ -24,14 +24,14 @@ public class Node implements Serializable {
     protected ArrayList<Address> readAddresses(){
         ArrayList<Address> addresses = new ArrayList<Address>();
         try {
-            File confFile = new File("src\\conf.txt");
+            File confFile = new File("conf.txt");
             Scanner confReader = new Scanner(confFile);
-            String line = "";
-            while (confReader.hasNextLine() && line != "%") {
-                line = confReader.nextLine();
-                String ipport[] = line.split("\\s+");
+            String line = confReader.nextLine();
+            while (!line.equals("%")) {
+                String ipport[]= line.split(" ");
                 Address address = new Address(ipport[0], Integer.parseInt(ipport[1]));
                 addresses.add(address);
+                line = confReader.nextLine();                
             }
             confReader.close();
         }catch (FileNotFoundException e) {

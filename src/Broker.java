@@ -23,8 +23,8 @@ public class Broker extends Node {
     //private Address address;
     ServerSocket brokerServerSocket;
 
-    public Broker(Address address){
-        this.address = address;
+    public Broker(String ip, int port){
+        this.address = new Address(ip,port);
         System.out.println("[Broker]: Broker Initialized ("+address.toString()+")");
     }
 
@@ -112,7 +112,7 @@ public class Broker extends Node {
     private ArrayList<String> readTopics(){
         ArrayList<String> topics = new ArrayList<String>();
         try {
-            File confFile = new File("src\\conf.txt");
+            File confFile = new File("conf.txt");
             Scanner confReader = new Scanner(confFile);
             String line = confReader.nextLine();
             while (confReader.hasNextLine() && line != "%") {

@@ -8,6 +8,7 @@ public class BrokerActionsForClient extends Thread {
     Broker broker;
 
     public BrokerActionsForClient(Socket connection) {
+        this.connection = connection;
         try {
             System.out.println("Got a connection...Opening streams....");
             out = new ObjectOutputStream(connection.getOutputStream());
