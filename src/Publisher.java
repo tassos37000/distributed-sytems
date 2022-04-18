@@ -4,8 +4,13 @@ import java.net.UnknownHostException;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
-public class Publisher {
+public class Publisher extends Node {
     ProfileName profileName;
+    Socket requestSocket = null;
+
+    public Publisher(Socket sock){
+        this.requestSocket = sock;
+    }
 
     ArrayList<Value> generateChunks(MultimediaFile mf){
         ArrayList<Value> a = new ArrayList<Value>(); 
@@ -23,13 +28,13 @@ public class Publisher {
 
     public void notifyFailure(Broker br){}
 
-    public void push(String str, Value val){
+    public void push(Value mes){
         Socket requestSocket = null;
         ObjectOutputStream out = null;
         try{
-            requestSocket = new Socket("192.168.1.4", 6000); //TODO: sent to random
             out = new ObjectOutputStream(requestSocket.getOutputStream());
-            out.writeObject(val);
+            
+            out.writeObject(mes);
             out.flush();
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
@@ -44,4 +49,10 @@ public class Publisher {
             }
         }
     }
+
+    public void run(){
+        Value mes = new Value("My message, pls get it :("); // TODO: ask for what to sent
+        push(mes);
+    }
+    
 }

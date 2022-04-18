@@ -22,12 +22,18 @@ public class BrokerActionsForClient extends Thread {
     public void run() {
         System.out.println("[Broker]: Connection is made at port: " + connection.getPort());
         try {
-            out.writeObject(""); ////////
+
+            Object mes = in.readObject();
+            System.out.println("Message Received: "+mes);
+
+            out.writeObject(mes);
             out.flush();
  
  
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException classNFException) {
+            classNFException.printStackTrace();
         } finally {
             try {
                 in.close();

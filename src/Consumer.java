@@ -2,24 +2,28 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Consumer extends Node {
+    Socket requestSocket = null;
+
+    public Consumer(Socket sock){
+        this.requestSocket = sock;
+    }
+
     public void disconnect(String str){}
 
     public void register(String str){}
 
-    public void showConversationData(String str, Value val){
+    public void showConversationData(){
         Socket requestSocket = null;
         ObjectInputStream in = null;
         try{
-            ArrayList<Address> brokerAddresses = readAddresses();
-            int rnd = new Random().nextInt(brokerAddresses.size());
-            requestSocket = new Socket(brokerAddresses.get(rnd).getIp(), 
-                                       brokerAddresses.get(rnd).getPort());
             in = new ObjectInputStream(requestSocket.getInputStream());
-            System.out.println("<Server>" + in.readObject());
+
+            Value mes = (Value)in.readObject();
+            System.out.println("Server>" + mes);
+
+            //System.out.println("<Server>" + in.readObject());
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
@@ -34,6 +38,10 @@ public class Consumer extends Node {
                 ioException.printStackTrace();
             }
         }
+    }
+
+    public void run(){
+        showConversationData();
     }
 
 }

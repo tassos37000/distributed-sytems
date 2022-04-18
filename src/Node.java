@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Node implements Serializable {
+public class Node extends Thread {
     //Broker Addresses (ip, port)
     public final ArrayList<Address> brokerList = readAddresses();
 
