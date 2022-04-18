@@ -1,5 +1,7 @@
-import java.io.*;
-import java.net.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 
 public class BrokerActionsForClient extends Thread {
     ObjectInputStream in;
@@ -23,11 +25,13 @@ public class BrokerActionsForClient extends Thread {
         System.out.println("[Broker]: Connection is made at port: " + connection.getPort());
         try {
 
-            Object mes = in.readObject();
-            System.out.println("Message Received: "+mes);
+            while(true){
+                Object mes = in.readObject();
+                System.out.println("Message Received: "+mes);
 
-            out.writeObject(mes);
-            out.flush();
+                out.writeObject(mes);
+                out.flush();
+            }
  
  
         } catch (IOException e) {

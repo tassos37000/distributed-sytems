@@ -11,16 +11,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Broker extends Node {
-    //List<Consumer> registeredUsers;
     List<Publisher> registeredPublishers;
-    ArrayList<Pair<Address,Integer>> brokerHash; // Broker Addres, Broker Hash
-    ArrayList<Pair<String,Integer>> topicHash;   // Topic Name, Topic Hash
-    ArrayList<Pair<Integer,Integer>> topicBroker;     // Topic Hash, Broker Hash
+    ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Addres, Broker Hash
+    ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
+    ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
     List<Integer> registeredUsers;
 
     Address address;
-
-    //private Address address;
     ServerSocket brokerServerSocket;
 
     public Broker(String ip, int port){
@@ -30,18 +27,10 @@ public class Broker extends Node {
 
     public void init(){
         calculateKeys();
-        // Thread zookeeperThread = new Thread(new Runnable() {
-        //     @Override
-        //     public void run() {
-        //         updateID();
-        //         updateID = false;
-        //     }
-        // });
-        // zookeeperThread.start();
         openServer();
     }
 
-    public void openServer(){
+    private void openServer(){
         try{
             brokerServerSocket = new ServerSocket(address.getPort());
             System.out.println("[Broker]: Ready to accept requests.");
@@ -70,7 +59,7 @@ public class Broker extends Node {
     //     return pub;
     // }
 
-    public void calculateKeys(){
+    private void calculateKeys(){
         ArrayList<Address> brokerList = readAddresses();
         brokerHash = new ArrayList<>();
         for (Address ad : brokerList){

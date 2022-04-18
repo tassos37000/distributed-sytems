@@ -1,11 +1,9 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Node extends Thread {
-    //Broker Addresses (ip, port)
     public final ArrayList<Address> brokerList = readAddresses();
 
     public void connect(){}

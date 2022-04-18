@@ -1,13 +1,12 @@
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 
 public class Consumer extends Node {
-    Socket requestSocket = null;
+    Client client = null;
 
-    public Consumer(Socket sock){
-        this.requestSocket = sock;
+    public Consumer(Client client){
+        this.client = client;
     }
 
     public void disconnect(String str){}
@@ -15,15 +14,16 @@ public class Consumer extends Node {
     public void register(String str){}
 
     public void showConversationData(){
-        Socket requestSocket = null;
         ObjectInputStream in = null;
         try{
-            in = new ObjectInputStream(requestSocket.getInputStream());
+            System.out.println("3."+client.getSocket().isClosed()); //-0
+            while(true){
+                in = new ObjectInputStream(client.getSocket().getInputStream());
 
-            Value mes = (Value)in.readObject();
-            System.out.println("Server>" + mes);
+                Value mes = (Value)in.readObject();
+                System.out.println("Server>" + mes);
+            }
 
-            //System.out.println("<Server>" + in.readObject());
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
@@ -33,13 +33,13 @@ public class Consumer extends Node {
         } finally {
             try {
                 in.close();
-                requestSocket.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         }
     }
 
+    @Override
     public void run(){
         showConversationData();
     }

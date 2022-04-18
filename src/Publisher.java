@@ -1,15 +1,14 @@
 import java.util.ArrayList;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 public class Publisher extends Node {
     ProfileName profileName;
-    Socket requestSocket = null;
+    Client client = null;
 
-    public Publisher(Socket sock){
-        this.requestSocket = sock;
+    public Publisher(Client client){
+        this.client = client;
     }
 
     ArrayList<Value> generateChunks(MultimediaFile mf){
@@ -29,13 +28,15 @@ public class Publisher extends Node {
     public void notifyFailure(Broker br){}
 
     public void push(Value mes){
-        Socket requestSocket = null;
         ObjectOutputStream out = null;
         try{
-            out = new ObjectOutputStream(requestSocket.getOutputStream());
-            
-            out.writeObject(mes);
-            out.flush();
+            System.out.println("5."+client.getSocket().isClosed()); //-0
+            while(true){
+                out = new ObjectOutputStream(client.getSocket().getOutputStream());
+                
+                out.writeObject(mes);
+                out.flush();
+            }
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
@@ -43,13 +44,13 @@ public class Publisher extends Node {
         } finally {
             try {
                 out.close();
-                requestSocket.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         }
     }
 
+    @Override
     public void run(){
         Value mes = new Value("My message, pls get it :("); // TODO: ask for what to sent
         push(mes);
