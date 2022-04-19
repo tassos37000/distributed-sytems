@@ -20,8 +20,12 @@ public class Broker extends Node {
     Address address;
     ServerSocket brokerServerSocket;
 
-    public Broker(String ip, int port){
-        this.address = new Address(ip,port);
+    /**
+     * Constructor for Broker
+     * @param num Broker number, in order to retrieve address
+     */
+    public Broker(int num){
+        this.address = brokerList.get(num-1);
         System.out.println("[Broker]: Broker Initialized ("+address.toString()+")");
     }
 

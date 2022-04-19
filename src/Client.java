@@ -18,8 +18,8 @@ public class Client extends Node {
     public Address getRandomBroker(){
         ArrayList<Address> brokerAddresses = readAddresses();
         int rnd = new Random().nextInt(brokerAddresses.size());
-        //return new Address(brokerAddresses.get(rnd).getIp(), brokerAddresses.get(rnd).getPort());
-        return new Address("localhost", 6000);
+        return new Address(brokerAddresses.get(rnd).getIp(), brokerAddresses.get(rnd).getPort());
+        //return new Address("localhost", 6000);
     }
             
  
