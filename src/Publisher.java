@@ -103,12 +103,12 @@ public class Publisher extends Node {
                 }
             }
             else if(answer.equals("N")) {
+                myObj2.close();
                 try {
                     out.close();
                     } catch (IOException ioException) {
                     ioException.printStackTrace();
                     }
-                myObj2.close();
                 break;
             }
             else{
