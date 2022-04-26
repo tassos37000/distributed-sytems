@@ -13,6 +13,8 @@ public class Client extends Node {
         address = getRandomBroker();
     }
 
+    public String getUsername(){return username; }
+
     public Socket getSocket(){ return requestSocket; }
 
     public Address getRandomBroker(){

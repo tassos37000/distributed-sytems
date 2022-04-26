@@ -6,9 +6,16 @@ import java.io.IOException;
 public class Publisher extends Node {
     ProfileName profileName;
     Client client = null;
+    ObjectOutputStream out = null;
 
     public Publisher(Client client){
         this.client = client;
+        try {
+            out = new ObjectOutputStream(client.getSocket().getOutputStream());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     ArrayList<Value> generateChunks(MultimediaFile mf){
@@ -27,12 +34,12 @@ public class Publisher extends Node {
 
     public void notifyFailure(Broker br){}
 
-    public void push(Value mes){
-        ObjectOutputStream out = null;
+    public synchronized void push(Value mes){
+        // ObjectOutputStream out = null;
         try{
             System.out.println("5."+client.getSocket().isClosed()); //-0
-            while(true){
-                out = new ObjectOutputStream(client.getSocket().getOutputStream());
+            for (int i=0; i<5; i++){
+                // out = new ObjectOutputStream(client.getSocket().getOutputStream());
                 
                 out.writeObject(mes);
                 out.flush();
@@ -41,18 +48,19 @@ public class Publisher extends Node {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        }
+        } //finally {
+        //     try {
+        //         out.close();
+        //     } catch (IOException ioException) {
+        //         ioException.printStackTrace();
+        //     }
+        // }
     }
 
     @Override
     public void run(){
-        Value mes = new Value("My message, pls get it :("); // TODO: ask for what to sent
+
+        Value mes = new Value(client.getUsername() + " My message, pls get it :("); // TODO: ask for what to sent
         push(mes);
     }
     
