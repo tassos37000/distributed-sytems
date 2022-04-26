@@ -37,13 +37,13 @@ public class Consumer extends Node {
             ioException.printStackTrace();
         } catch (ClassNotFoundException classNotFoundException){
             classNotFoundException.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        }
+        } //finally {
+        //     try {
+        //         in.close();
+        //     } catch (IOException ioException) {
+        //         ioException.printStackTrace();
+        //     }
+        // }
     }
 
     @Override

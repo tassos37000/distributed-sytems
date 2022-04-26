@@ -7,11 +7,12 @@ public class Value implements Serializable{
     /**
      * Constructor
     */
-    public Value(){
-        multimediaFile = new MultimediaFile();
-    }
-    public Value(String mes){
+   
+    public Value(String mes, Boolean mm){
         this.message = mes;
+        //if (mm){
+        //    multimediaFile = new MultimediaFile(mes);
+        //}
     }
 
     @Override
