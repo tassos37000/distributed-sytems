@@ -1,12 +1,15 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.image.ImageMetadataExtractor;
 
 
 public class MultimediaFile implements Serializable {
@@ -18,6 +21,9 @@ public class MultimediaFile implements Serializable {
     String frameWidth;
     String frameHeight;
     byte[] multimediaFileChunk;
+    Metadata metadata;
+    int chunkID;
+    int data_bytes;
     
     /**
      * Constructor
@@ -58,8 +64,17 @@ public class MultimediaFile implements Serializable {
                 e.printStackTrace();
             }
         }
+
+        
                 
         multimediaFileChunk = new byte[0];
+    }
+
+    public MultimediaFile(byte[] buffer, Metadata metadata, int chunkID, int data_bytes) {
+        this.multimediaFileChunk = buffer;
+        this.metadata = metadata;
+        this.chunkID = chunkID;
+        this.data_bytes = data_bytes;
     }
 
    

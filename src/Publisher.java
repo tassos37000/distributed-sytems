@@ -1,8 +1,17 @@
 import java.util.ArrayList;
 import java.net.UnknownHostException;
 import java.io.ObjectOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.mp4.MP4Parser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.SAXException;
+
 
 public class Publisher extends Node {
     ProfileName profileName;
@@ -56,6 +65,37 @@ public class Publisher extends Node {
         //     }
         // }
     }
+
+    public ArrayList<MultimediaFile> chunkVideo(File file) {
+        ArrayList<MultimediaFile> chunks = new ArrayList<>();
+        File peepee = new File(file.getPath());
+        int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
+        byte[] buffer;
+        try {
+            BodyContentHandler handler = new BodyContentHandler();
+            Metadata metadata = new Metadata();
+            FileInputStream inputstream = new FileInputStream(peepee);
+            ParseContext pcontext = new ParseContext();
+            MP4Parser MP4Parser = new MP4Parser();
+            MP4Parser.parse(inputstream, handler, metadata, pcontext);
+            FileInputStream fis = new FileInputStream(file);
+            int chunkID = 0;
+            int data_bytes;
+            for (int i = 0; i < file.length(); i += sizeOfChunk) {
+                buffer = new byte[sizeOfChunk];
+                data_bytes = fis.read(buffer);
+                MultimediaFile chunk = new MultimediaFile(buffer, metadata, chunkID, data_bytes);
+                chunks.add(chunk);
+                chunkID++;
+            }
+            inputstream.close();
+            fis.close();
+            return chunks;
+        } catch (TikaException | IOException | SAXException e) {
+            e.printStackTrace();
+        }
+        return null;
+	}	
 
     @Override
     public void run(){
