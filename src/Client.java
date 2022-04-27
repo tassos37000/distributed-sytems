@@ -8,11 +8,13 @@ public class Client extends Node {
     Address address = null;
     String username = null;
     Socket requestSocket = null;
-
+    Thread consumer=null;
+    Thread publisher=null;
+    public boolean stopthreads=false;
     Client() {
         address = getRandomBroker();
     }
-
+    
     public String getUsername(){return username; }
 
     public Socket getSocket(){ return requestSocket; }
@@ -29,14 +31,15 @@ public class Client extends Node {
         Scanner sc = new Scanner(System.in);
         System.out.print("Choose a username: ");
         username = sc.nextLine();
+        
  
         try {
             requestSocket = new Socket(address.getIp(), address.getPort());
             System.out.println("1."+requestSocket.isClosed()); //-0
-            Thread consumer = new Consumer(this);
-            Thread publisher = new Publisher(this);
+            consumer = new Consumer(this);
+            publisher = new Publisher(this);
 
-            while(true){
+            while(!stopthreads){
                 System.out.println("2."+requestSocket.isClosed()); //-0
                 consumer.start();
                 System.out.println("4."+requestSocket.isClosed()); //-0
@@ -48,13 +51,19 @@ public class Client extends Node {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } finally {
+        } 
+        sc.close();
+    }
+
+
+    public  void closeClient (){
             try {
+                ((Consumer)consumer).closee();
+                ((Publisher)publisher).closee();
                 requestSocket.close();
-                sc.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+            
         }
-    }
 }

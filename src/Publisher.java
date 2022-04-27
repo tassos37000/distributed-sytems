@@ -104,11 +104,8 @@ public class Publisher extends Node {
             }
             else if(answer.equals("N")) {
                 myObj2.close();
-                try {
-                    out.close();
-                    } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                    }
+                client.stopthreads=true;
+                client.closeClient();
                 break;
             }
             else{
@@ -117,5 +114,16 @@ public class Publisher extends Node {
             }  
         }
         push(mes);
-    } 
+    }
+
+    public void  closee(){
+        try {
+            if (out!=null){
+                out.close();
+            }
+        }catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        
+    }
 }

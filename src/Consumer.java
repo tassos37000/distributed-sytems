@@ -50,5 +50,13 @@ public class Consumer extends Node {
     public void run(){
         showConversationData();
     }
-
+    public void closee(){
+        try {
+            if (in!=null){
+                    in.close();
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+    }
 }
