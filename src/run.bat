@@ -1,6 +1,11 @@
 :: temp file to run brokers
 
-javac *.java
-START "Broker1" CMD /k "java Broker1"
-START "Broker2" CMD /k "java Broker2"
-START "Broker3" CMD /k "java Broker3"
+:: Edit the next line, and enter your path
+set path = <enter-your-path-here> 
+
+javac *.java -classpath %path%
+START "Broker1" CMD /k "java Broker1 -classpath " %path%
+START "Broker2" CMD /k "java Broker2 -classpath " %path%
+START "Broker3" CMD /k "java Broker3 -classpath " %path%
+
+START "Client1" CMD /k "java Client1 -classpath " %path%
