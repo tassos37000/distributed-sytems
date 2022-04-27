@@ -8,8 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.image.ImageMetadataExtractor;
+
 
 
 public class MultimediaFile implements Serializable {
@@ -21,16 +20,13 @@ public class MultimediaFile implements Serializable {
     String frameWidth;
     String frameHeight;
     byte[] multimediaFileChunk;
-    Metadata metadata;
     int chunkID;
     int data_bytes;
     
     /**
      * Constructor
     */
-    public MultimediaFile(String fileName){
-        multimediaFileName = fileName;
-        //profileName = "";
+    public MultimediaFile(String fileName, byte[] buffer, int chunkID, int data_bytes) {
         File m_file = new File(multimediaFileName);
         Path m_path = Paths.get(multimediaFileName);
         try {
@@ -38,17 +34,15 @@ public class MultimediaFile implements Serializable {
             dateCreated = attr.creationTime().toString();
             length = Long.toString(attr.size()) ;
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        
 
         String extension = "";
         int index = fileName.lastIndexOf('.');
         if(index > 0) {
             extension = fileName.substring(index + 1);
-            System.out.println("File extension is " + extension);
         }
+
         if (extension.equals("mp4")){
             frameWidth = "";
             frameHeight = "";
@@ -65,14 +59,7 @@ public class MultimediaFile implements Serializable {
             }
         }
 
-        
-                
-        multimediaFileChunk = new byte[0];
-    }
-
-    public MultimediaFile(byte[] buffer, Metadata metadata, int chunkID, int data_bytes) {
         this.multimediaFileChunk = buffer;
-        this.metadata = metadata;
         this.chunkID = chunkID;
         this.data_bytes = data_bytes;
     }

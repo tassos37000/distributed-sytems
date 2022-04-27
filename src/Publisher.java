@@ -102,6 +102,33 @@ public class Publisher extends Node {
         return null;
 	}	
 
+    public ArrayList<MultimediaFile> chunkImage(String fileName) {
+        ArrayList<MultimediaFile> chunks = new ArrayList<>();
+        //File peepee = new File(fileName.getPath());
+        int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
+        byte[] buffer;
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            int chunkID = 0;
+            int data_bytes;
+            for (int i = 0; i < fileName.length(); i += sizeOfChunk) {
+                buffer = new byte[sizeOfChunk];
+                data_bytes = fis.read(buffer);
+                MultimediaFile chunk = new MultimediaFile(fileName, buffer, chunkID, data_bytes);
+                chunks.add(chunk);
+                chunkID++;
+            }
+            fis.close();
+            return chunks;
+        } catch ( IOException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+	}	
+
     @Override
     public void run(){
 
