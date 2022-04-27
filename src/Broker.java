@@ -38,11 +38,11 @@ public class Broker extends Node {
         try{
             brokerServerSocket = new ServerSocket(address.getPort());
             System.out.println("[Broker]: Ready to accept requests.");
-            Socket appNodeSocket;
+            Socket clientSocket;
             while (true){
-                appNodeSocket = brokerServerSocket.accept();
-                Thread appNodeThread = new BrokerActionsForClient(appNodeSocket);
-                appNodeThread.start();
+                clientSocket = brokerServerSocket.accept();
+                Thread clientThread = new BrokerActionsForClient(clientSocket);
+                clientThread.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class Broker extends Node {
                 topics.add(line);
             }
             confReader.close();
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return topics;

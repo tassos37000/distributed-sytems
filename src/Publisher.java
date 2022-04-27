@@ -1,11 +1,11 @@
 import java.util.ArrayList;
+import java.util.Objects;
 import java.net.UnknownHostException;
 import java.io.ObjectOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.mp4.MP4Parser;
@@ -47,6 +47,9 @@ public class Publisher extends Node {
     public synchronized void push(Value mes){
         // ObjectOutputStream out = null;
         try{
+            if (Objects.isNull(mes)){
+                return;
+            }
             System.out.println("5."+client.getSocket().isClosed()); //-0
             //for (int i=0; i<5; i++){
                 // out = new ObjectOutputStream(client.getSocket().getOutputStream());
@@ -91,7 +94,9 @@ public class Publisher extends Node {
             inputstream.close();
             fis.close();
             return chunks;
-        } catch (TikaException | IOException | SAXException e) {
+        } catch (IOException | SAXException e) {
+            e.printStackTrace();
+        } catch (Exception e){
             e.printStackTrace();
         }
         return null;
@@ -145,6 +150,8 @@ public class Publisher extends Node {
             else if(answer.equals("N")) {
                 myObj2.close();
                 client.stopthreads=true;
+                Value exitmes = new Value();
+                push(exitmes);
                 client.closeClient();
                 break;
             }
@@ -156,12 +163,14 @@ public class Publisher extends Node {
         push(mes);
     }
 
-    public void  closee(){
+    public void closee(){
         try {
-            if (out!=null){
+            if (!Objects.isNull(out)){
                 out.close();
+                out = null;
+                System.out.println("[Publisher]: Output closed.");
             }
-        }catch (IOException ioException) {
+        } catch (IOException ioException) {
             ioException.printStackTrace();
         }
         

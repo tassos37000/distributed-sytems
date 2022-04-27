@@ -1,6 +1,7 @@
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Consumer extends Node {
     Client client = null;
@@ -25,6 +26,9 @@ public class Consumer extends Node {
         try{
             System.out.println("3."+client.getSocket().isClosed()); //-0
             while(true){
+                if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
+                    break;
+                }
                 //in = new ObjectInputStream(client.getSocket().getInputStream());
 
                 Value mess = (Value)in.readObject();
@@ -48,15 +52,19 @@ public class Consumer extends Node {
 
     @Override
     public void run(){
-        showConversationData();
+        if (!Objects.isNull(in)){
+            showConversationData();
+        }
     }
     public void closee(){
         try {
-            if (in!=null){
-                    in.close();
-                }
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+            if (!Objects.isNull(in)){
+                in.close();
+                in = null;
+                System.out.println("[Consumer]: Input closed.");
             }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 }

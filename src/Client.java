@@ -8,14 +8,15 @@ public class Client extends Node {
     Address address = null;
     String username = null;
     Socket requestSocket = null;
-    Thread consumer=null;
-    Thread publisher=null;
-    public boolean stopthreads=false;
+    Thread consumer = null;
+    Thread publisher = null;
+    public boolean stopthreads = false;
+
     Client() {
         address = getRandomBroker();
     }
     
-    public String getUsername(){return username; }
+    public String getUsername(){ return username; }
 
     public Socket getSocket(){ return requestSocket; }
 
@@ -23,8 +24,9 @@ public class Client extends Node {
         ArrayList<Address> brokerAddresses = readAddresses();
         int rnd = new Random().nextInt(brokerAddresses.size());
         return new Address(brokerAddresses.get(rnd).getIp(), brokerAddresses.get(rnd).getPort());
-        //return new Address("localhost", 6000);
     }
+
+    public Socket getConnection() { return requestSocket; }
             
  
     public void run() {
@@ -56,14 +58,19 @@ public class Client extends Node {
     }
 
 
-    public  void closeClient (){
-            try {
-                ((Consumer)consumer).closee();
-                ((Publisher)publisher).closee();
-                requestSocket.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-            
+    public void closeClient (){
+        try {
+            ((Consumer)consumer).closee();
+            ((Publisher)publisher).closee();
+            //consumer.interrupt();
+            //publisher.interrupt();
+            System.out.println("[Client]: Client closed streams.");
+            requestSocket.close();
+            //requestSocket = null;
+            System.out.println("[Client]: Client closed socket.");
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
+        
+    }
 }
