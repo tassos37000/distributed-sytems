@@ -102,7 +102,7 @@ public class Broker extends Node {
         try{
             for (int i=0; i<this.brokerNum; i++){
                 Socket requestSocket = new Socket(brokerList.get(i).getIp(), brokerList.get(i).getPort());
-                Thread brokerThread = new BrokerActionsForBroker(requestSocket);
+                Thread brokerThread = new BrokerActionsForClient(requestSocket);
                 brokerThread.start();
             }
         } catch (IOException e) {
