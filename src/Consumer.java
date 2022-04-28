@@ -2,6 +2,7 @@ import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.net.SocketException;
 
 public class Consumer extends Node {
     Client client = null;
@@ -29,10 +30,12 @@ public class Consumer extends Node {
                 if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
                     break;
                 }
+                
                 //in = new ObjectInputStream(client.getSocket().getInputStream());
-
-                Value mess = (Value)in.readObject();
-                System.out.println("Server>" + mess);
+                if (Client.Alivesocket){
+                    Value mess = (Value)in.readObject();
+                    System.out.println("Server>" + mess);
+                }
             }
 
         } catch (UnknownHostException unknownHost) {
@@ -52,10 +55,11 @@ public class Consumer extends Node {
 
     @Override
     public void run(){
-        if (!Objects.isNull(in)){
-            showConversationData();
-        }
+            if (!Objects.isNull(in)){
+                showConversationData();
+            }
     }
+    
     public void closee(){
         try {
             if (!Objects.isNull(in)){
@@ -63,7 +67,8 @@ public class Consumer extends Node {
                 in = null;
                 System.out.println("[Consumer]: Input closed.");
             }
-        } catch (IOException ioException) {
+        }catch (SocketException a){}
+         catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }

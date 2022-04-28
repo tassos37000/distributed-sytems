@@ -12,7 +12,7 @@ public class Client extends Node {
     Thread consumer = null;
     Thread publisher = null;
     public boolean stopthreads = false;
-
+    public static boolean Alivesocket= false;
     Client() {
         address = getRandomBroker();
     }
@@ -37,10 +37,12 @@ public class Client extends Node {
         
  
         try {
+
             requestSocket = new Socket(address.getIp(), address.getPort());
             System.out.println("1."+requestSocket.isClosed()); //-0
             consumer = new Consumer(this);
             publisher = new Publisher(this);
+            Alivesocket= true;
 
             while(!stopthreads){
                 System.out.println("2."+requestSocket.isClosed()); //-0
@@ -49,7 +51,6 @@ public class Client extends Node {
                 publisher.start();
                 System.out.println("6."+requestSocket.isClosed()); //-0
             }
- 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
@@ -58,20 +59,43 @@ public class Client extends Node {
         sc.close();
     }
 
-
-    public void closeClient (){
+    
+    public void closeClient() throws IOException {
         try {
-            ((Consumer)consumer).closee();
+            System.out.println("TRYING TO CLOSE SOCKET");
+            Alivesocket= false;
+            stopthreads=true;
             ((Publisher)publisher).closee();
-            //consumer.interrupt();
-            //publisher.interrupt();
-            System.out.println("[Client]: Client closed streams.");
+            ((Consumer)consumer).closee();
             requestSocket.close();
-            //requestSocket = null;
-            System.out.println("[Client]: Client closed socket.");
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+        } catch(SocketException e){
         }
-        
     }
+
+        
+    // public void closeClient() throws IOException {
+    //     try {
+    //         System.out.println("TRYING TO CLOSE SOCKET");
+    //         Alivesocket= false;
+    //         stopthreads=true;
+    //     }
+    //     finally {
+    //       try {
+    //         ((Publisher)publisher).closee();
+    //       }
+       
+    //       finally {
+    //         try {
+    //         ((Consumer)consumer).closee();
+    //         }
+       
+    //         finally {
+    //             requestSocket.close();
+                
+    //         }
+    //       }
+    //     }
+    //   }
 }
+
+
