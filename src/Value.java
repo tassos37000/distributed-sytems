@@ -33,6 +33,8 @@ public class Value implements Serializable, Comparable<Value>{
 
     public Boolean gethasMultimediaFile(){ return this.hasMultimediaFile; }
 
+    public String getMessage() { return message; }
+
     @Override
     public String toString(){
         return message;

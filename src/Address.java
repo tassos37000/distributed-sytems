@@ -21,13 +21,13 @@ public class Address implements Serializable {
     /**
      * Getters 
      */
-    public int getPort() {
-        return port;
-    }
+    public int getPort() { return port; }
 
-    public String getIp() {
-        return ip;
-    }
+    public String getIp() { return ip; }
+
+    public void setIp(String ip){ this.ip = ip; }
+
+    public void setPort(int port){ this.port = port; }
 
     /**
      * Used to check if 2 Address obj are the same (same port and ip)

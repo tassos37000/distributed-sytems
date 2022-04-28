@@ -60,17 +60,12 @@ public class Consumer extends Node {
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
+        } catch (SocketException se){
         } catch (IOException ioException) {
             ioException.printStackTrace();
         } catch (ClassNotFoundException classNotFoundException){
             classNotFoundException.printStackTrace();
-        } //finally {
-        //     try {
-        //         in.close();
-        //     } catch (IOException ioException) {
-        //         ioException.printStackTrace();
-        //     }
-        // }
+        } 
     }
 
     @Override
