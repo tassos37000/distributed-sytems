@@ -5,7 +5,7 @@ public class Value implements Serializable, Comparable<Value>{
     String message = null;
     Boolean exit = null;
     Boolean fromBroker = false;
-    Boolean hasMultimediaFile;
+    Boolean hasMultimediaFile = false;
     String senter = null;
 
     /**
@@ -25,13 +25,13 @@ public class Value implements Serializable, Comparable<Value>{
         this.exit = true;
     }
 
-    public Boolean getExit() { return exit; }
-
-    public void setMultimediaFile(MultimediaFile mf){
-        this.multimediaFile = mf;
-    }
+    public void setMultimediaFile(MultimediaFile mf) { this.multimediaFile = mf;}
 
     public void setFromBroker(Boolean val) { this.fromBroker = val; }
+
+    public Boolean getExit() { return exit; }
+
+    public Boolean gethasMultimediaFile(){ return this.hasMultimediaFile; }
 
     @Override
     public String toString(){

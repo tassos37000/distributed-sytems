@@ -47,7 +47,7 @@ public class Publisher extends Node {
                 return;
             }
             System.out.println("5."+client.getSocket().isClosed()); //-0
-            if(mes.hasMultimediaFile){
+            if(mes.gethasMultimediaFile()){
                 ArrayList<Value> chunks = chunkMultimediaFile(mes.message);
                 for (Value chunk : chunks) {
                     out.writeObject(chunk);
