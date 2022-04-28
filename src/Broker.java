@@ -12,25 +12,28 @@ import java.io.FileNotFoundException;
 
 public class Broker extends Node {
     List<Publisher> registeredPublishers;
-    ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Addres, Broker Hash
+    ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Address, Broker Hash
     ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
     ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
     List<Integer> registeredUsers;
 
     Address address;
     ServerSocket brokerServerSocket;
+    int brokerNum;  // Broker Number
 
     /**
      * Constructor for Broker
      * @param num Broker number, in order to retrieve address
      */
     public Broker(int num){
-        this.address = brokerList.get(num-1);
-        System.out.println("[Broker]: Broker Initialized ("+address.toString()+")");
+        this.brokerNum = num-1;
+        this.address = brokerList.get(this.brokerNum);
+        System.out.println("[Broker]: Broker Initialized ("+address+")");
     }
 
     public void init(){
         calculateKeys();
+        connectToBrokers();
         openServer();
     }
 
@@ -88,6 +91,23 @@ public class Broker extends Node {
                 }
             }
         }
+    }
+
+    /**
+     * Every Broker creates a connection (like a client would)
+     * for any broker that was created "before" them
+     * (see broker order in configuration)
+     */
+    private void connectToBrokers(){
+        try{
+            for (int i=0; i<this.brokerNum; i++){
+                Socket requestSocket = new Socket(brokerList.get(i).getIp(), brokerList.get(i).getPort());
+                Thread brokerThread = new BrokerActionsForBroker(requestSocket);
+                brokerThread.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }        
     }
 
     public void filterConsumers(String f_con){}

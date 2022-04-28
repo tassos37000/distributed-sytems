@@ -34,9 +34,9 @@ public class BrokerActionsForClient extends Thread {
                     this.closee();
                     break;
                 }
-
+                // TODO: check if it's a message from another Broker
                 System.out.println("[Broker]: Message Received: "+mes);
-
+                
                 out.writeObject(mes);
                 out.flush();
             }

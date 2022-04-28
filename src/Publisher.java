@@ -87,9 +87,9 @@ public class Publisher extends Node {
             for (int i = 0; i < file.length(); i += sizeOfChunk) {
                 buffer = new byte[sizeOfChunk];
                 data_bytes = fis.read(buffer);
-                MultimediaFile chunk = new MultimediaFile(buffer, metadata, chunkID, data_bytes);
-                chunks.add(chunk);
-                chunkID++;
+                // MultimediaFile chunk = new MultimediaFile(buffer, metadata, chunkID, data_bytes);
+                // chunks.add(chunk);
+                // chunkID++;
             }
             inputstream.close();
             fis.close();
@@ -132,7 +132,7 @@ public class Publisher extends Node {
     @Override
     public void run(){
 
-        Value mes = new Value(client.getUsername() + " My message, pls get it :(",false); // TODO: ask for what to sent
+        Value mes = new Value(client.getUsername(), "",false,false);
         Scanner myObj2 = new Scanner(System.in);
         while (true){
             System.out.println("Do you want to send a message? Press y for yes n for no"); 
@@ -144,7 +144,7 @@ public class Publisher extends Node {
                 if (answer2.equals("T")){
                     System.out.println("Please type your text"); 
                     String mytext =  myObj2.nextLine().toUpperCase();
-                    Value mestext = new Value(mytext,false);
+                    Value mestext = new Value(client.getUsername(),mytext,false,false);
                     push(mestext);
                     break;
                 }   
@@ -152,7 +152,7 @@ public class Publisher extends Node {
                     // jpg j5
                     System.out.println("Please type your name of photo with its extension"); 
                     String mytext =  myObj2.nextLine();
-                    Value photo = new Value(mytext , true );
+                    Value photo = new Value(client.getUsername(),mytext,true,false);
                     push(photo);
                     break;
                 }
@@ -160,7 +160,7 @@ public class Publisher extends Node {
                      //  .mp4
                     System.out.println("Please type your name of photo with its extension"); 
                     String mytext =  myObj2.nextLine();
-                    Value mediaa = new Value(mytext , true );
+                    Value mediaa = new Value(client.getUsername(),mytext,true,false);
                     push(mediaa);
                     break;
                 }

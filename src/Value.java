@@ -2,15 +2,19 @@ import java.io.Serializable;
 
 public class Value implements Serializable{
     MultimediaFile multimediaFile;
-    String message;
-    Boolean exit;
+    String message = null;
+    Boolean exit = null;
+    Boolean fromBroker = false;
+    String senter = null;
 
     /**
      * Constructor
     */
    
-    public Value(String mes, Boolean mm){
+    public Value(String senter, String mes, Boolean mm, Boolean fromBroker){
+        this.senter = senter;
         this.message = mes;
+        this.fromBroker = fromBroker;
         this.exit = false;
         //if (mm){
         //    multimediaFile = new MultimediaFile(mes);
@@ -27,4 +31,6 @@ public class Value implements Serializable{
     public String toString(){
         return message;
     }
+
+    public void setFromBroker(Boolean val) { this.fromBroker = val; }
 }

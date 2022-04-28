@@ -1,5 +1,6 @@
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Random;
