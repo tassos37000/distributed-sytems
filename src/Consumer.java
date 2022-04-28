@@ -29,10 +29,12 @@ public class Consumer extends Node {
                 if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
                     break;
                 }
+                
                 //in = new ObjectInputStream(client.getSocket().getInputStream());
-
-                Value mess = (Value)in.readObject();
-                System.out.println("Server>" + mess);
+                if (Client.Alivesocket){
+                    Value mess = (Value)in.readObject();
+                    System.out.println("Server>" + mess);
+                }
             }
 
         } catch (UnknownHostException unknownHost) {
@@ -52,18 +54,21 @@ public class Consumer extends Node {
 
     @Override
     public void run(){
-        if (!Objects.isNull(in)){
-            showConversationData();
-        }
+            if (!Objects.isNull(in)){
+                showConversationData();
+            }
     }
+    
     public void closee(){
         try {
             if (!Objects.isNull(in)){
                 in.close();
                 in = null;
                 System.out.println("[Consumer]: Input closed.");
+                System.out.println("error t onsumer");
             }
         } catch (IOException ioException) {
+            
             ioException.printStackTrace();
         }
     }

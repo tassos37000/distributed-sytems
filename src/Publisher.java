@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.net.SocketException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.mp4.MP4Parser;
@@ -133,6 +134,7 @@ public class Publisher extends Node {
     public void run(){
 
         Value mes = new Value(client.getUsername() + " My message, pls get it :(",false); // TODO: ask for what to sent
+        push(mes);
         Scanner myObj2 = new Scanner(System.in);
         while (true){
             System.out.println("Do you want to send a message? Press y for yes n for no"); 
@@ -172,14 +174,18 @@ public class Publisher extends Node {
                     System.out.println("Invalid choice!");  
                 }
                continue;
-                }
+                }     
             }
             else if(answer.equals("N")) {
                 myObj2.close();
                 client.stopthreads=true;
                 Value exitmes = new Value();
                 push(exitmes);
-                client.closeClient();
+                try {
+                    client.closeClient();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             else{
@@ -187,7 +193,7 @@ public class Publisher extends Node {
                 
             }  
         }
-        push(mes);
+        //push(mes);
     }
 
     public void closee(){
@@ -199,7 +205,6 @@ public class Publisher extends Node {
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        }
-        
+        } 
     }
 }
