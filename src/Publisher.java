@@ -183,7 +183,8 @@ public class Publisher extends Node {
                 push(exitmes);
                 try {
                     client.closeClient();
-                } catch (IOException e) {
+                }catch (SocketException a){}
+                catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -203,7 +204,8 @@ public class Publisher extends Node {
                 out = null;
                 System.out.println("[Publisher]: Output closed.");
             }
-        } catch (IOException ioException) {
+        }catch (SocketException a){}
+         catch (IOException ioException) {
             ioException.printStackTrace();
         } 
     }

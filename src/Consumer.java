@@ -2,6 +2,7 @@ import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.net.SocketException;
 
 public class Consumer extends Node {
     Client client = null;
@@ -65,10 +66,9 @@ public class Consumer extends Node {
                 in.close();
                 in = null;
                 System.out.println("[Consumer]: Input closed.");
-                System.out.println("error t onsumer");
             }
-        } catch (IOException ioException) {
-            
+        }catch (SocketException a){}
+         catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }
