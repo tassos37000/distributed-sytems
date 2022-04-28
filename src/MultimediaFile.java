@@ -13,7 +13,6 @@ import java.io.Serializable;
 
 public class MultimediaFile implements Serializable {
     String multimediaFileName;
-    //String profileName;
     String dateCreated;
     String length;
     String framerate;
@@ -26,13 +25,15 @@ public class MultimediaFile implements Serializable {
     /**
      * Constructor
     */
+
     public MultimediaFile(String fileName, byte[] buffer, int chunkID, int data_bytes) {
+        this.multimediaFileName = fileName;
         File m_file = new File(multimediaFileName);
         Path m_path = Paths.get(multimediaFileName);
         try {
             BasicFileAttributes attr = Files.readAttributes(m_path, BasicFileAttributes.class);
-            dateCreated = attr.creationTime().toString();
-            length = Long.toString(attr.size()) ;
+            this.dateCreated = attr.creationTime().toString();
+            this.length = Long.toString(attr.size()) ;
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -44,16 +45,16 @@ public class MultimediaFile implements Serializable {
         }
 
         if (extension.equals("mp4")){
-            frameWidth = "";
-            frameHeight = "";
-            framerate = "";
+            this.frameWidth = "";
+            this.frameHeight = "";
+            this.framerate = "";
         }
         if (extension.equals("jpg") || extension.equals("jpeg")){
             BufferedImage img = null;
             try {
                 img = ImageIO.read(m_file);
-                frameWidth = Integer.toString(img.getWidth());
-                frameHeight = Integer.toString(img.getHeight());
+                this.frameWidth = Integer.toString(img.getWidth());
+                this.frameHeight = Integer.toString(img.getHeight());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -64,5 +65,8 @@ public class MultimediaFile implements Serializable {
         this.data_bytes = data_bytes;
     }
 
+    public int getChunkID(){ return this.chunkID; }
+
+    public byte[] getChunkData(){ return this.multimediaFileChunk; }
    
 }

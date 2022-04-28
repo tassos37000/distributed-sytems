@@ -1,6 +1,9 @@
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.net.SocketException;
 
@@ -26,6 +29,7 @@ public class Consumer extends Node {
         //ObjectInputStream in = null;
         try{
             System.out.println("3."+client.getSocket().isClosed()); //-0
+            ArrayList<Value> chunksOfMess = new ArrayList<>();
             while(true){
                 if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
                     break;
@@ -34,6 +38,22 @@ public class Consumer extends Node {
                 //in = new ObjectInputStream(client.getSocket().getInputStream());
                 if (Client.Alivesocket){
                     Value mess = (Value)in.readObject();
+                    if(mess.multimediaFile!= null){
+                        chunksOfMess.add(mess);
+                        Collections.sort(chunksOfMess);
+                        continue;
+                    }
+                    System.out.println("last chunk: " + mess.message  + ", chunksOfMess.size(): " + chunksOfMess.size());
+                    if(mess.hasMultimediaFile && Integer.parseInt(mess.message) == chunksOfMess.size()){
+                        FileOutputStream fos = new FileOutputStream("test"+chunksOfMess.get(0).message);
+                        for (Value chunk : chunksOfMess) {
+                            System.out.println("chunkID: " + chunk.multimediaFile.getChunkID());
+                            fos.write(chunk.multimediaFile.getChunkData());
+                        }
+                        fos.close();
+                        chunksOfMess.clear();
+                        continue;
+                    }
                     System.out.println("Server>" + mess);
                 }
             }
