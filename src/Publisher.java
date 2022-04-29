@@ -19,7 +19,6 @@ public class Publisher extends Node {
         try {
             out = new ObjectOutputStream(client.getSocket().getOutputStream());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -41,12 +40,11 @@ public class Publisher extends Node {
     public void notifyFailure(Broker br){}
 
     public synchronized void push(Value mes){
-        // ObjectOutputStream out = null;
         try{
             if (Objects.isNull(mes)){
                 return;
             }
-            System.out.println("5."+client.getSocket().isClosed()); //-0
+            //System.out.println("5."+client.getSocket().isClosed()); //-0
             if(mes.gethasMultimediaFile()){
                 ArrayList<Value> chunks = chunkMultimediaFile(mes.message);
                 for (Value chunk : chunks) {
@@ -62,13 +60,7 @@ public class Publisher extends Node {
             System.err.println("You are trying to connect to an unknown host!");
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        } //finally {
-        //     try {
-        //         out.close();
-        //     } catch (IOException ioException) {
-        //         ioException.printStackTrace();
-        //     }
-        // }
+        }
     }
 
     public ArrayList<Value> chunkMultimediaFile(String fileName) {
@@ -106,50 +98,49 @@ public class Publisher extends Node {
     
     @Override
     public void run(){
-        //Value mes = new Value(client.getUsername(), "",false,false);
-        Scanner myObj2 = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         while (true){
             System.out.println("Do you want to send a message? Press y for yes n for no"); 
-            String answer= myObj2.nextLine().toUpperCase();
+            String answer= sc.nextLine().toUpperCase();
             if (answer.equals("Y")){
                 while (true){
-                System.out.println("Press 't' to send a text ,'p' for a photo ,'v' for a video and 'b' to go back if u changed your mind");   
-                String answer2= myObj2.nextLine().toUpperCase();
-                if (answer2.equals("T")){
-                    System.out.println("Please type your text"); 
-                    String mytext =  myObj2.nextLine().toUpperCase();
-                    Value mestext = new Value(client.getUsername(),mytext,false,false);
-                    push(mestext);
-                    break;
-                }   
-                else if (answer2.equals("P")){
-                    // jpg j5
-                    System.out.println("Please type your name of photo with its extension"); 
-                    String mytext =  myObj2.nextLine();
-                    Value photo = new Value(client.getUsername(),mytext,true,false);
-                    push(photo);
-                    break;
-                }
-                else if (answer2.equals("V")){
-                     //  .mp4
-                    System.out.println("Please type your name of video with its extension"); 
-                    String mytext =  myObj2.nextLine();
-                    Value mediaa = new Value(client.getUsername(),mytext,true,false);
-                    push(mediaa);
-                    break;
-                }
-                  
-                else if (answer2.equals("B")){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid choice!");  
-                }
-               continue;
+                    System.out.println("Press 't' to send a text ,'p' for a photo ,'v' for a video and 'b' to go back if u changed your mind");   
+                    String answer2= sc.nextLine().toUpperCase();
+                    if (answer2.equals("T")){
+                        System.out.println("Please type your text"); 
+                        String mytext =  sc.nextLine().toUpperCase();
+                        Value mestext = new Value(client.getUsername(),mytext,false,false);
+                        push(mestext);
+                        break;
+                    }   
+                    else if (answer2.equals("P")){
+                        // jpg j5
+                        System.out.println("Please type your name of photo with its extension"); 
+                        String mytext =  sc.nextLine();
+                        Value photo = new Value(client.getUsername(),mytext,true,false);
+                        push(photo);
+                        break;
+                    }
+                    else if (answer2.equals("V")){
+                        //  .mp4
+                        System.out.println("Please type your name of video with its extension"); 
+                        String mytext =  sc.nextLine();
+                        Value mediaa = new Value(client.getUsername(),mytext,true,false);
+                        push(mediaa);
+                        break;
+                    }
+                    
+                    else if (answer2.equals("B")){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid choice!");  
+                    }
+                    continue;
                 }     
             }
             else if(answer.equals("N")) {
-                myObj2.close();
+                sc.close();
                 client.stopthreads=true;
                 Value exitmes = new Value();
                 push(exitmes);
@@ -163,7 +154,6 @@ public class Publisher extends Node {
             }
             else{
                 System.out.println("Invalid choice! Press y for yes n for no"); 
-                
             }  
         }
         //push(mes);

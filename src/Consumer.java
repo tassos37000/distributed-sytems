@@ -14,7 +14,7 @@ public class Consumer extends Node {
     public Consumer(Client client){
         this.client = client;
         try {
-            in = new ObjectInputStream(client.getSocket().getInputStream());
+            in = new ObjectInputStream(this.client.getSocket().getInputStream());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -23,20 +23,29 @@ public class Consumer extends Node {
 
     public void disconnect(String str){}
 
-    public void register(String str){}
+    public String register(){
+        try{
+            Value response = (Value)in.readObject();
+            response = (Value)in.readObject();
+            return response.getMessage(); // message is in form "<change broker: yes/no> <brokernum if needed>"
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        } catch (ClassNotFoundException cnfException){
+            cnfException.printStackTrace();
+        }
+        return "";
+    }
 
     public synchronized void showConversationData(){
-        //ObjectInputStream in = null;
         try{
-            System.out.println("3."+client.getSocket().isClosed()); //-0
+            //System.out.println("3."+client.getSocket().isClosed()); //-0
             ArrayList<Value> chunksOfMess = new ArrayList<>();
             while(true){
                 if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
                     break;
                 }
                 
-                //in = new ObjectInputStream(client.getSocket().getInputStream());
-                if (Client.Alivesocket){
+                if (client.Alivesocket){
                     Value mess = (Value)in.readObject();
                     if(mess.multimediaFile!= null){
                         chunksOfMess.add(mess);

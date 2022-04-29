@@ -5,12 +5,13 @@ import java.net.Socket;
 import java.util.Objects;
 
 public class BrokerActionsForClient extends Thread {
-    ObjectInputStream in;
-    ObjectOutputStream out;
-    Socket connection;
-    Broker broker;
+    ObjectInputStream in = null;
+    ObjectOutputStream out = null;
+    Socket connection = null;
+    Broker broker = null;
 
-    public BrokerActionsForClient(Socket connection) {
+    public BrokerActionsForClient(Broker broker, Socket connection) {
+        this.broker = broker;
         this.connection = connection;
         try {
             System.out.println("[Broker]: Got a connection...Opening streams....");
