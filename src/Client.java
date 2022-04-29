@@ -85,9 +85,6 @@ public class Client extends Node {
                 ((Publisher)publisher).push(message);
 
                 String data[] = ((Consumer)consumer).register().split(" ");
-                for(int i=0; i<data.length; i++){
-                    System.out.println("data["+i+"]: "+data[i] );
-                }
                 if (data[0].equals("yes")){
                     String ip = brokerAddresses.get(Integer.parseInt(data[1])).getIp();
                     address.setIp(ip);

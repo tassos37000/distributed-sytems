@@ -1,5 +1,6 @@
 import java.net.UnknownHostException;
 import java.io.ObjectInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ public class Consumer extends Node {
         try {
             in = new ObjectInputStream(this.client.getSocket().getInputStream());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -52,14 +52,26 @@ public class Consumer extends Node {
                         Collections.sort(chunksOfMess);
                         continue;
                     }
-                    System.out.println("last chunk: " + mess.message  + ", chunksOfMess.size(): " + chunksOfMess.size());
+                    //System.out.println("last chunk: " + mess.message  + ", chunksOfMess.size(): " + chunksOfMess.size());
                     if(mess.hasMultimediaFile && Integer.parseInt(mess.message) == chunksOfMess.size()){
-                        FileOutputStream fos = new FileOutputStream("test"+chunksOfMess.get(0).message);
-                        for (Value chunk : chunksOfMess) {
-                            System.out.println("chunkID: " + chunk.multimediaFile.getChunkID());
-                            fos.write(chunk.multimediaFile.getChunkData());
+                        if(chunksOfMess.get(0).message.equals(".STRING")){
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            for (Value chunk : chunksOfMess) {
+                                baos.write(chunk.multimediaFile.getChunkData());
+                                //System.out.println("chunk ID: " + chunk.multimediaFile.getChunkID());
+                            }
+                            byte[] strByteArray = baos.toByteArray();
+                            String allMessage = new String(strByteArray);
+                            System.out.println("Server>" + allMessage);
+                            baos.close();
                         }
-                        fos.close();
+                        else{
+                            FileOutputStream fos = new FileOutputStream("test"+chunksOfMess.get(0).message);
+                            for (Value chunk : chunksOfMess) {
+                                fos.write(chunk.multimediaFile.getChunkData());
+                            }
+                            fos.close();
+                        }
                         chunksOfMess.clear();
                         continue;
                     }

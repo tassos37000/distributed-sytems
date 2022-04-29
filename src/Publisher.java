@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.net.UnknownHostException;
 import java.io.ObjectOutputStream;
@@ -13,6 +14,7 @@ public class Publisher extends Node {
     ProfileName profileName;
     Client client = null;
     ObjectOutputStream out = null;
+    int sizeOfChunkForString = 100; // until 100 characters
 
     public Publisher(Client client){
         this.client = client;
@@ -46,7 +48,14 @@ public class Publisher extends Node {
             }
             //System.out.println("5."+client.getSocket().isClosed()); //-0
             if(mes.gethasMultimediaFile()){
-                ArrayList<Value> chunks = chunkMultimediaFile(mes.message);
+                ArrayList<Value> chunks = chunkMultimediaFile(mes.getMessage());
+                for (Value chunk : chunks) {
+                    out.writeObject(chunk);
+                    out.flush();
+                }
+            }
+            else if (mes.getMessage() != null && mes.getMessage().getBytes().length > sizeOfChunkForString){
+                ArrayList<Value> chunks = chunkString(mes.getMessage());
                 for (Value chunk : chunks) {
                     out.writeObject(chunk);
                     out.flush();
@@ -63,6 +72,27 @@ public class Publisher extends Node {
         }
     }
 
+    public ArrayList<Value> chunkString(String message) {
+        ArrayList<Value> chunks = new ArrayList<>();
+        byte[] buffer;
+        int chunkID = 0;
+        byte[] messBytes = message.getBytes();
+
+        for (int i = 0; i < messBytes.length; i += sizeOfChunkForString) {
+            buffer = new byte[sizeOfChunkForString];
+            buffer = Arrays.copyOfRange(messBytes, i, i+sizeOfChunkForString);
+            MultimediaFile chunk = new MultimediaFile("str.STRING", buffer, chunkID);
+            Value chunkVal= new Value(client.getUsername(), ".STRING", true, false);
+            chunkVal.setMultimediaFile(chunk);
+            chunks.add(chunkVal);
+            chunkID++;
+        }
+        Value chunkVal= new Value(client.getUsername(), Integer.toString(chunkID), true, false);
+        chunks.add(chunkVal);
+
+        return chunks;
+	}	
+
     public ArrayList<Value> chunkMultimediaFile(String fileName) {
         ArrayList<Value> chunks = new ArrayList<>();
         int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
@@ -71,13 +101,12 @@ public class Publisher extends Node {
             File myFile = new File(fileName);
             FileInputStream fis = new FileInputStream(fileName);
             int chunkID = 0;
-            int data_bytes;
             
             for (int i = 0; i < myFile.length(); i += sizeOfChunk) {
-                System.out.println(myFile.length());
+                //System.out.println(myFile.length());
                 buffer = new byte[sizeOfChunk];
-                data_bytes = fis.read(buffer);
-                MultimediaFile chunk = new MultimediaFile(fileName, buffer, chunkID, data_bytes);
+                fis.read(buffer);
+                MultimediaFile chunk = new MultimediaFile(fileName, buffer, chunkID);
                 Value chunkVal= new Value(client.getUsername(), fileName, true, false);
                 chunkVal.setMultimediaFile(chunk);
                 chunks.add(chunkVal);

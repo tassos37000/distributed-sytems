@@ -20,49 +20,51 @@ public class MultimediaFile implements Serializable {
     String frameHeight;
     byte[] multimediaFileChunk;
     int chunkID;
-    int data_bytes;
     
     /**
      * Constructor
     */
 
-    public MultimediaFile(String fileName, byte[] buffer, int chunkID, int data_bytes) {
+    public MultimediaFile(String fileName, byte[] buffer, int chunkID) {
         this.multimediaFileName = fileName;
-        File m_file = new File(multimediaFileName);
-        Path m_path = Paths.get(multimediaFileName);
-        try {
-            BasicFileAttributes attr = Files.readAttributes(m_path, BasicFileAttributes.class);
-            this.dateCreated = attr.creationTime().toString();
-            this.length = Long.toString(attr.size()) ;
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
         String extension = "";
         int index = fileName.lastIndexOf('.');
         if(index > 0) {
             extension = fileName.substring(index + 1);
         }
 
-        if (extension.equals("mp4")){
-            this.frameWidth = "";
-            this.frameHeight = "";
-            this.framerate = "";
-        }
-        if (extension.equals("jpg") || extension.equals("jpeg")){
-            BufferedImage img = null;
+        if(!extension.equals("STRING")){
+            File m_file = new File(multimediaFileName);
+            Path m_path = Paths.get(multimediaFileName);
             try {
-                img = ImageIO.read(m_file);
-                this.frameWidth = Integer.toString(img.getWidth());
-                this.frameHeight = Integer.toString(img.getHeight());
-            } catch (IOException e) {
-                e.printStackTrace();
+                BasicFileAttributes attr = Files.readAttributes(m_path, BasicFileAttributes.class);
+                this.dateCreated = attr.creationTime().toString();
+                this.length = Long.toString(attr.size()) ;
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            
+
+            if (extension.equals("mp4")){
+                this.frameWidth = "";
+                this.frameHeight = "";
+                this.framerate = "";
+            }
+            if (extension.equals("jpg") || extension.equals("jpeg")){
+                BufferedImage img = null;
+                try {
+                    img = ImageIO.read(m_file);
+                    this.frameWidth = Integer.toString(img.getWidth());
+                    this.frameHeight = Integer.toString(img.getHeight());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         this.multimediaFileChunk = buffer;
         this.chunkID = chunkID;
-        this.data_bytes = data_bytes;
     }
 
     public int getChunkID(){ return this.chunkID; }
