@@ -3,12 +3,15 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
+import javafx.util.Pair;
+import java.util.ArrayList;
 
 public class BrokerActionsForClient extends Thread {
     ObjectInputStream in = null;
     ObjectOutputStream out = null;
     Socket connection = null;
     Broker broker = null;
+    
 
     public BrokerActionsForClient(Broker broker, Socket connection) {
         this.broker = broker;
@@ -28,6 +31,7 @@ public class BrokerActionsForClient extends Thread {
      *         false if to keep connection with client after
      */
     private boolean firstConnect(){
+        boolean topicalreadyin=false;
         try {
             Value receivedMes = (Value)in.readObject();
             String desiredTopic = receivedMes.getMessage();
@@ -38,12 +42,28 @@ public class BrokerActionsForClient extends Thread {
                 message = new Value("Broker"+broker.brokerNum, "yes "+manager, false, true);
                 out.writeObject(receivedMes);
                 out.flush();
-            } 
+            } else{
+                for (int i=0;i< broker.registerdTopicClients.size();i++){
+                    if (desiredTopic == broker.registerdTopicClients.get(i).getKey()){
+                        topicalreadyin=true;
+                        break;
+                    }
+                } 
+                if (!topicalreadyin){
+                    broker.registerdTopicClients.add((new Pair<String ,ArrayList<String> >  (desiredTopic,(new ArrayList<>()))));
+                }
+                for (int i=0;i< broker.registerdTopicClients.size();i++){
+                    if (desiredTopic == broker.registerdTopicClients.get(i).getKey()){
+                        broker.registerdTopicClients.get(i).getValue().add (receivedMes.getSenter()) ;
+                        break;
+                    } 
+                }
+            }
             message = new Value("Broker"+broker.brokerNum, "no", false, true);
             out.writeObject(message);
             out.flush();
             return false;
-
+            
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException cnfe) {
@@ -73,7 +93,7 @@ public class BrokerActionsForClient extends Thread {
         System.out.println("[Broker]: Connection is made at port: " + connection.getPort());
         try {
             firstConnect();
-
+            
             while(true){
                 Object mes = in.readObject();
                 

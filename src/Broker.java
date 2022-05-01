@@ -15,10 +15,11 @@ public class Broker extends Node {
     ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Address, Broker Hash
     ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
     ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
-    List<Integer> registeredUsers;
-
+    List<String> activeClients;
+    ArrayList<Pair<String ,ArrayList<String>>> registerdTopicClients; //Topic and registered Client 
     Address address;
     ServerSocket brokerServerSocket;
+    
     int brokerNum;  // Broker Number
 
     /**

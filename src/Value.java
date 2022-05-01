@@ -35,6 +35,8 @@ public class Value implements Serializable, Comparable<Value>{
 
     public String getMessage() { return message; }
 
+    public String getSenter() { return senter; }
+
     @Override
     public String toString(){
         return message;
