@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,8 +16,8 @@ public class Broker extends Node {
     ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Address, Broker Hash
     ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
     ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
-    List<String> activeClients;
-    ArrayList<Pair<String ,ArrayList<String>>> registerdTopicClients; //Topic and registered Client 
+    HashMap<String ,BrokerActionsForClient> activeClients; // Username, connection with client 
+    HashMap<String ,ArrayList<String>> registerdTopicClients; //Topic and registered Client 
     Address address;
     ServerSocket brokerServerSocket;
     
@@ -29,6 +30,8 @@ public class Broker extends Node {
     public Broker(int num){
         this.brokerNum = num-1;
         this.address = brokerList.get(this.brokerNum);
+        this.activeClients = new HashMap<>();
+        this.registerdTopicClients = new HashMap<>();
         System.out.println("[Broker]: Broker Initialized ("+address+")");
     }
 

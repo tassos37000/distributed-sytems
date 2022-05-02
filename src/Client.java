@@ -36,8 +36,9 @@ public class Client extends Node {
         Scanner sc = new Scanner(System.in);
         System.out.print("Choose a username: ");
         username = sc.nextLine();
-        
+        System.out.println("before get topic info: " + address);
         boolean changeBroker = getTopicInfo();
+        System.out.println("after get topic info: " + address);
         try {
             //System.out.println("0."+requestSocket.isClosed()); //-0
             if (changeBroker){
@@ -90,6 +91,7 @@ public class Client extends Node {
                     address.setIp(ip);
                     int port = brokerAddresses.get(Integer.parseInt(data[1])).getPort();
                     address.setPort(port);
+                    System.out.println("address inside get topic info after setters: " + address);
 
                     Value exitmes = new Value();
                     ((Publisher)publisher).push(exitmes);
