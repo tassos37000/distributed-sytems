@@ -36,18 +36,15 @@ public class Client extends Node {
         Scanner sc = new Scanner(System.in);
         System.out.print("Choose a username: ");
         username = sc.nextLine();
-        System.out.println("before get topic info: " + address);
         boolean changeBroker = getTopicInfo();
-        System.out.println("after get topic info: " + address);
         try {
-            //System.out.println("0."+requestSocket.isClosed()); //-0
             if (changeBroker){
-                System.out.println("Must change broker");
                 requestSocket = new Socket(address.getIp(), address.getPort());
                 publisher = new Publisher(this);
                 consumer = new Consumer(this);
             }
-            Alivesocket= true;
+            Alivesocket = true;
+            stopthreads = false;
 
             while(!stopthreads){
                 //System.out.println("2."+requestSocket.isClosed()); //-0
@@ -84,19 +81,16 @@ public class Client extends Node {
             if (requestSocket!=null){
                 Value message = new Value(this.username, topic, false, false);
                 ((Publisher)publisher).push(message);
-
                 String data[] = ((Consumer)consumer).register().split(" ");
                 if (data[0].equals("yes")){
                     String ip = brokerAddresses.get(Integer.parseInt(data[1])).getIp();
                     address.setIp(ip);
                     int port = brokerAddresses.get(Integer.parseInt(data[1])).getPort();
                     address.setPort(port);
-                    System.out.println("address inside get topic info after setters: " + address);
-
+                    
                     Value exitmes = new Value();
                     ((Publisher)publisher).push(exitmes);
                     closeClient();
-                    System.out.println("requestSocket (before that small while): "+requestSocket); 
                     return true;
                 }
             }

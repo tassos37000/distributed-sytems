@@ -3,7 +3,6 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
-import javafx.util.Pair;
 import java.util.ArrayList;
 
 public class BrokerActionsForClient extends Thread {
@@ -42,23 +41,20 @@ public class BrokerActionsForClient extends Thread {
             Value message = null;
             System.out.println("manager: " + manager);
             System.out.println("broker.brokerNum: " + broker.brokerNum);
-            if (manager != broker.brokerNum){
+            if (manager != broker.brokerNum){ // Client must change Broker
                 message = new Value("Broker"+broker.brokerNum, "yes "+manager, false, true);
                 out.writeObject(message);
                 out.flush();
                 return true;
-            } else{
-                System.out.println("Client message");
+            } else{ // Client doesn't change Broker
                 for(String j: broker.registerdTopicClients.keySet()){
                     if (desiredTopic.equals(j)){
-                        System.out.println("------------topic already in");
                         topicalreadyin=true;
                         break;
                     }
                 }
                 System.out.println("topicalreadyin: " + topicalreadyin);
                 if (!topicalreadyin){
-                    System.out.println("------------put client in registered topic");
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
                 }
                 for (String i: broker.registerdTopicClients.keySet()){
@@ -90,8 +86,6 @@ public class BrokerActionsForClient extends Thread {
         int topicHash = topic.hashCode();
         int brokerNum = -1;
         for (int i=0; i<broker.brokerHash.size(); i++){
-            //System.out.println("broker.brokerHash in manager: " + broker.brokerHash.get(i).getValue());
-            //System.out.println("topicHash: " + topicHash);
             if (broker.brokerHash.get(i).getValue() < topicHash){ // -0 Might need < instead
                 brokerNum = i;
             }
@@ -113,14 +107,7 @@ public class BrokerActionsForClient extends Thread {
                     this.closee();
                     break;
                 }
-                // TODO: check if it's a message from another Broker
 
-                //int i=0;
-                // for (i=0; i<broker.registerdTopicClients.size(); i++){
-                //     if (broker.registerdTopicClients.get(i).getKey().equals(desiredTopic)){ // -0 Might need < instead
-                //         break;
-                //     }
-                // }
                 System.out.println("[Broker]: Message Received: "+mes);
                 System.out.println(broker.registerdTopicClients.get(desiredTopic));
                 for (int z=0; z<broker.registerdTopicClients.get(desiredTopic).size(); z++){
@@ -137,14 +124,7 @@ public class BrokerActionsForClient extends Thread {
             e.printStackTrace();
         } catch (ClassNotFoundException classNFException) {
             classNFException.printStackTrace();
-        } /*finally {
-            try {
-                in.close();
-                out.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        }*/
+        } 
     }
 
     public void closee(){

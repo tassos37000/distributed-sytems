@@ -26,7 +26,6 @@ public class Consumer extends Node {
     public String register(){
         try{
             Value response = (Value)in.readObject();
-            response = (Value)in.readObject();
             return response.getMessage(); // message is in form "<change broker: yes/no> <brokernum if needed>"
         } catch (IOException ioException) {
             ioException.printStackTrace();

@@ -39,7 +39,7 @@ public class Value implements Serializable, Comparable<Value>{
 
     @Override
     public String toString(){
-        return message;
+        return "["+senter+"]: "+message;
     }
 
     @Override
