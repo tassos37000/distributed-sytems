@@ -37,7 +37,6 @@ public class Consumer extends Node {
 
     public synchronized void showConversationData(){
         try{
-            //System.out.println("3."+client.getSocket().isClosed()); //-0
             ArrayList<Value> chunksOfMess = new ArrayList<>();
             while(true){
                 if (Objects.isNull(in) || Objects.isNull(client.getConnection())){
@@ -51,17 +50,15 @@ public class Consumer extends Node {
                         Collections.sort(chunksOfMess);
                         continue;
                     }
-                    //System.out.println("last chunk: " + mess.message  + ", chunksOfMess.size(): " + chunksOfMess.size());
                     if(mess.hasMultimediaFile && Integer.parseInt(mess.message) == chunksOfMess.size()){
                         if(chunksOfMess.get(0).message.equals(".STRING")){
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             for (Value chunk : chunksOfMess) {
                                 baos.write(chunk.multimediaFile.getChunkData());
-                                //System.out.println("chunk ID: " + chunk.multimediaFile.getChunkID());
                             }
                             byte[] strByteArray = baos.toByteArray();
                             String allMessage = new String(strByteArray);
-                            System.out.println("Server>" + allMessage);
+                            System.out.println(allMessage);
                             baos.close();
                         }
                         else{
@@ -74,7 +71,9 @@ public class Consumer extends Node {
                         chunksOfMess.clear();
                         continue;
                     }
-                    System.out.println("Server>" + mess);
+                    if (!mess.getNotification()){
+                        System.out.println(mess);
+                    }
                 }
             }
 
@@ -90,9 +89,9 @@ public class Consumer extends Node {
 
     @Override
     public void run(){
-            if (!Objects.isNull(in)){
-                showConversationData();
-            }
+        if (!Objects.isNull(in)){
+            showConversationData();
+        }
     }
     
     public void closee(){

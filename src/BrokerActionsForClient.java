@@ -43,6 +43,7 @@ public class BrokerActionsForClient extends Thread {
             System.out.println("broker.brokerNum: " + broker.brokerNum);
             if (manager != broker.brokerNum){ // Client must change Broker
                 message = new Value("Broker"+broker.brokerNum, "yes "+manager, false, true);
+                message.setNotification(true);
                 out.writeObject(message);
                 out.flush();
                 return true;
@@ -57,14 +58,10 @@ public class BrokerActionsForClient extends Thread {
                 if (!topicalreadyin){
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
                 }
-                for (String i: broker.registerdTopicClients.keySet()){
-                    if (desiredTopic.equals(i)){
-                        broker.registerdTopicClients.get(i).add(receivedMes.getSenter()) ;
-                        break;
-                    } 
-                }
+                broker.registerdTopicClients.get(desiredTopic).add(receivedMes.getSenter());
             }
             message = new Value("Broker"+broker.brokerNum, "no", false, true);
+            message.setNotification(true);
             out.writeObject(message);
             out.flush();
 
@@ -110,6 +107,7 @@ public class BrokerActionsForClient extends Thread {
 
                 System.out.println("[Broker]: Message Received: "+mes);
                 System.out.println(broker.registerdTopicClients.get(desiredTopic));
+                // Send to registered clients
                 for (int z=0; z<broker.registerdTopicClients.get(desiredTopic).size(); z++){
                     String username = broker.registerdTopicClients.get(desiredTopic).get(z);
                     if (!username.equals(((Value)mes).getSenter())){

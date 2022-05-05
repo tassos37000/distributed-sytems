@@ -14,7 +14,7 @@ public class Publisher extends Node {
     ProfileName profileName;
     Client client = null;
     ObjectOutputStream out = null;
-    int sizeOfChunkForString = 100; // until 100 characters
+    int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
 
     public Publisher(Client client){
         this.client = client;
@@ -54,7 +54,7 @@ public class Publisher extends Node {
                     out.flush();
                 }
             }
-            else if (mes.getMessage() != null && mes.getMessage().getBytes().length > sizeOfChunkForString){
+            else if (mes.getMessage() != null && mes.getMessage().getBytes().length > sizeOfChunk){
                 ArrayList<Value> chunks = chunkString(mes.getMessage());
                 for (Value chunk : chunks) {
                     out.writeObject(chunk);
@@ -78,9 +78,9 @@ public class Publisher extends Node {
         int chunkID = 0;
         byte[] messBytes = message.getBytes();
 
-        for (int i = 0; i < messBytes.length; i += sizeOfChunkForString) {
-            buffer = new byte[sizeOfChunkForString];
-            buffer = Arrays.copyOfRange(messBytes, i, i+sizeOfChunkForString);
+        for (int i = 0; i < messBytes.length; i += sizeOfChunk) {
+            buffer = new byte[sizeOfChunk];
+            buffer = Arrays.copyOfRange(messBytes, i, i+sizeOfChunk);
             MultimediaFile chunk = new MultimediaFile("str.STRING", buffer, chunkID);
             Value chunkVal= new Value(client.getUsername(), ".STRING", true, false);
             chunkVal.setMultimediaFile(chunk);
@@ -95,7 +95,6 @@ public class Publisher extends Node {
 
     public ArrayList<Value> chunkMultimediaFile(String fileName) {
         ArrayList<Value> chunks = new ArrayList<>();
-        int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
         byte[] buffer;
         try {
             File myFile = new File(fileName);
@@ -137,7 +136,7 @@ public class Publisher extends Node {
                     String answer2= sc.nextLine().toUpperCase();
                     if (answer2.equals("T")){
                         System.out.println("Please type your text"); 
-                        String mytext =  sc.nextLine().toUpperCase();
+                        String mytext =  sc.nextLine();
                         Value mestext = new Value(client.getUsername(),mytext,false,false);
                         push(mestext);
                         break;

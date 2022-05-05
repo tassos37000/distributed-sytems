@@ -50,6 +50,7 @@ public class Client extends Node {
                 //System.out.println("2."+requestSocket.isClosed()); //-0
                 consumer.start();
                 //System.out.println("4."+requestSocket.isClosed()); //-0
+                ((Publisher)publisher).push(new Value(this.getUsername(), "", false, false)); // -0
                 publisher.start();
                 //System.out.println("6."+requestSocket.isClosed()); //-0
             }
