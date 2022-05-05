@@ -1,10 +1,15 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Node extends Thread {
     public final ArrayList<Address> brokerList = readAddresses();
+    FileWriter logFile;
+    BufferedWriter output;
 
     public void connect(){}
     public void disconnect(){}
@@ -36,6 +41,35 @@ public class Node extends Thread {
             e.printStackTrace();
         }
         return addresses;
+    }
+
+    protected FileWriter createLogFile(String name){
+        try {
+            logFile = new FileWriter(name, false);
+            output = new BufferedWriter(logFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return logFile;
+    }
+
+    protected void writeToFile(String info){
+        try {
+            output.write(info + "\n");
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void closeFile(){
+        try {
+            output.close();
+            logFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
