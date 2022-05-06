@@ -17,7 +17,7 @@ public class BrokerActionsForClient extends Thread {
         this.broker = broker;
         this.connection = connection;
         try {
-            System.out.println("[Broker]: Got a connection...Opening streams....");
+            broker.writeToFile("[Broker]: Got a connection... Opening streams...", true);
             out = new ObjectOutputStream(connection.getOutputStream());
             in = new ObjectInputStream(connection.getInputStream());
         } catch (IOException e) {
@@ -37,11 +37,9 @@ public class BrokerActionsForClient extends Thread {
             desiredTopic = receivedMes.getMessage();
             int manager = managerBroker(desiredTopic);
             broker.activeClients.put(receivedMes.getSenter(),this);
-            System.out.println("in first connect");
             Value message = null;
-            System.out.println("manager: " + manager);
-            System.out.println("broker.brokerNum: " + broker.brokerNum);
             if (manager != broker.brokerNum){ // Client must change Broker
+                broker.writeToFile("[Broker]: Client must change broker.", true);
                 message = new Value("Broker"+broker.brokerNum, "yes "+manager, false, true);
                 message.setNotification(true);
                 out.writeObject(message);
@@ -49,7 +47,7 @@ public class BrokerActionsForClient extends Thread {
                 return true;
             } else{ // Client doesn't change Broker
                 topicalreadyin = broker.registerdTopicClients.containsKey(desiredTopic);
-                System.out.println("topicalreadyin: " + topicalreadyin);
+                broker.writeToFile("[Broker]: Topic \"" + topicalreadyin + "\" already exists.", true);
                 if (!topicalreadyin){
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
                 }
@@ -87,7 +85,7 @@ public class BrokerActionsForClient extends Thread {
 
     @Override
     public void run() {
-        System.out.println("[Broker]: Connection is made at port: " + connection.getPort());
+        broker.writeToFile("[Broker]: Connection is made at port: " + connection.getPort(), true);
         try {
             firstConnect();
             
@@ -95,13 +93,12 @@ public class BrokerActionsForClient extends Thread {
                 Object mes = in.readObject();
                 
                 if (((Value)mes).getExit()){
-                    System.out.println("[Broker]: Disconnecting Client..");
+                    broker.writeToFile("[Broker]: Disconnecting Client...", true);
                     removeClient(((Value)mes).getSenter());
                     break;
                 }
 
-                System.out.println("[Broker]: Message Received: "+mes);
-                System.out.println("registered clients ("+desiredTopic+"):"+broker.registerdTopicClients.get(desiredTopic));
+                broker.writeToFile("[Broker]: Message Received: "+mes, true);
                 // Send to registered clients
                 if (((Value)mes).getMessage().equals("")){
                     continue;
@@ -128,21 +125,17 @@ public class BrokerActionsForClient extends Thread {
      * @param name client name to be disconnected
      */
     private void removeClient(String name){
-        System.out.println("[Broker]: Disconnecting Client \""+name+"\"");
+        broker.writeToFile("[Broker]: Disconnecting Client \""+name+"\"", true);
         broker.activeClients.remove(name);
         if (broker.registerdTopicClients.containsKey(desiredTopic)) {
             for (String c:broker.registerdTopicClients.get(desiredTopic)){
-                System.out.println("CLIENT: "+c);
                 if (c.equals(name)){
-                    System.out.println("Above Client shall be removed.");
+                    broker.writeToFile("[Broker]: Client "+name+" will be removed.", true);
                     broker.registerdTopicClients.get(desiredTopic).remove(c);
                     break;
                 }
             }
         }
-        // System.out.println("Senter to remove: "+name);
-        // System.out.println("ActiveClients: "+broker.activeClients);
-        // System.out.println("RegisteredTopicClients: "+broker.registerdTopicClients);
         this.closee();
     }
 
@@ -151,16 +144,16 @@ public class BrokerActionsForClient extends Thread {
             if (!Objects.isNull(in)){
                 in.close();
                 in = null;
-                System.out.println("[Broker]: Input stream from client closed.");
+                broker.writeToFile("[Broker]: Input stream from client closed.", true);
             }
             if (!Objects.isNull(out)){
                 out.close();
                 out = null;
-                System.out.println("[Broker]: Output stream to client closed.");
+                broker.writeToFile("[Broker]: Output stream to client closed.", true);
             }
             connection.close();
             this.interrupt();
-            System.out.println("[Broker]: Client disconnected.");
+            broker.writeToFile("[Broker]: Client disconnected.", true);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -171,6 +164,7 @@ public class BrokerActionsForClient extends Thread {
         try {
             out.writeObject(mes);
             out.flush();
+            broker.writeToFile("[Broker]: Message sent.", true);
         } catch (IOException e) {
             e.printStackTrace();
         }

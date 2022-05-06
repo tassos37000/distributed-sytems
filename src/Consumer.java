@@ -72,6 +72,7 @@ public class Consumer extends Node {
                         continue;
                     }
                     if (!mess.getNotification()){
+                        client.writeToFile("[Consumer]: Message received: "+mess, false);
                         System.out.println(mess);
                     }
                 }
@@ -99,7 +100,7 @@ public class Consumer extends Node {
             if (!Objects.isNull(in)){
                 in.close();
                 in = null;
-                System.out.println("[Consumer]: Input closed.");
+                client.writeToFile("[Consumer]: Input closed.", false);
             }
         }catch (SocketException a){}
          catch (IOException ioException) {

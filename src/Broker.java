@@ -32,7 +32,10 @@ public class Broker extends Node {
         this.address = brokerList.get(this.brokerNum);
         this.activeClients = new HashMap<>();
         this.registerdTopicClients = new HashMap<>();
-        System.out.println("[Broker]: Broker Initialized ("+address+")");
+
+        this.createLogFile("Broker"+(num)+"-log.txt");
+        System.out.println("[Broker]: Broker log file created.");
+        this.writeToFile("[Broker]: Broker Initialized ("+address+")", true);
     }
 
     public void init(){
@@ -44,7 +47,7 @@ public class Broker extends Node {
     private void openServer(){
         try{
             brokerServerSocket = new ServerSocket(address.getPort());
-            System.out.println("[Broker]: Ready to accept requests.");
+            this.writeToFile("[Broker]: Ready to accept requests.", true);
             Socket clientSocket;
             while (true){
                 clientSocket = brokerServerSocket.accept();
@@ -61,14 +64,6 @@ public class Broker extends Node {
             }
         }
     }
-
-    // public Consumer acceptConnection(Consumer con){
-    //     return con;
-    // }
-
-    // public Publisher acceptConnection(Publisher pub){
-    //     return pub;
-    // }
 
     private void calculateKeys(){
         ArrayList<Address> brokerList = readAddresses();
@@ -113,14 +108,6 @@ public class Broker extends Node {
             e.printStackTrace();
         }        
     }
-
-    public void filterConsumers(String f_con){}
-
-    public void notifyBrokersOnChanges(){}
-
-    public void notifyPublisher(String n_pub){}
-
-    public void pull(String str){}
 
     /**
      * Helper method to read topic names from configuration file.

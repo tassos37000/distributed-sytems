@@ -54,8 +54,11 @@ public class Node extends Thread {
         return logFile;
     }
 
-    protected void writeToFile(String info){
+    protected void writeToFile(String info, boolean print){
         try {
+            if (print){
+                System.out.println(info);
+            }
             output.write(info + "\n");
             output.flush();
         } catch (IOException e) {

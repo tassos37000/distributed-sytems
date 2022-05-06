@@ -155,6 +155,7 @@ public class Publisher extends Node {
                 }     
             }
             else if(answer.equals("N")) {
+                client.writeToFile("[Publisher]: Client wants to disconnect.", false);
                 sc.close();
                 client.stopthreads=true;
                 Value exitmes = new Value(client.getUsername());
@@ -178,7 +179,7 @@ public class Publisher extends Node {
             if (!Objects.isNull(out)){
                 out.close();
                 out = null;
-                System.out.println("[Publisher]: Output closed.");
+                client.writeToFile("[Publisher]: Output closed.", false);
             }
         }catch (SocketException a){}
          catch (IOException ioException) {

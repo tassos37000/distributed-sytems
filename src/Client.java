@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.Random;
  
 public class Client extends Node {
-    ArrayList<Address> brokerAddresses;
+    ArrayList<Address> brokerAddresses = null;
     Address address = null;
     String username = null;
+    int id;
     Socket requestSocket = null;
     Thread consumer = null;
     Thread publisher = null;
@@ -18,6 +19,8 @@ public class Client extends Node {
     String desiredTopic = null;
     Client() {
         address = getRandomBroker();
+        id = new Random().nextInt();
+        this.createLogFile("Client"+id+".txt");
     }
     
     public String getUsername(){ return username; }
@@ -105,7 +108,7 @@ public class Client extends Node {
     
     public void closeClient() throws IOException {
         try {
-            System.out.println("[Client]: Attempting to close client..");
+            this.writeToFile("[Client]: Attempting to close client..", false);
             Alivesocket= false;
             stopthreads=true;
 
@@ -117,8 +120,8 @@ public class Client extends Node {
             consumer = null;
             requestSocket = null;
             
-            System.out.println("[Client]: Socket closed.");
-            System.out.println("[Client]: Client closed connection to broker.");
+            this.writeToFile("[Client]: Socket closed.", false);
+            this.writeToFile("[Client]: Client closed connection to broker.", false);
         } catch(SocketException e){
         } catch(IOException ioException) {
             ioException.printStackTrace();
