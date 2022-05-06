@@ -30,23 +30,11 @@ public class Publisher extends Node {
         return a;
     }
 
-    public void getBrokerList(){}
-
-    // public Broker hasTopic(String str){
-    //     Broker b = new Broker();
-    //     return b;
-    // }
-
-    public void notifyBrokersNewMessage(String str){}
-
-    public void notifyFailure(Broker br){}
-
     public synchronized void push(Value mes){
         try{
             if (Objects.isNull(mes)){
                 return;
             }
-            //System.out.println("5."+client.getSocket().isClosed()); //-0
             if(mes.gethasMultimediaFile()){
                 ArrayList<Value> chunks = chunkMultimediaFile(mes.getMessage());
                 for (Value chunk : chunks) {
@@ -102,7 +90,6 @@ public class Publisher extends Node {
             int chunkID = 0;
             
             for (int i = 0; i < myFile.length(); i += sizeOfChunk) {
-                //System.out.println(myFile.length());
                 buffer = new byte[sizeOfChunk];
                 fis.read(buffer);
                 MultimediaFile chunk = new MultimediaFile(fileName, buffer, chunkID);
@@ -170,7 +157,7 @@ public class Publisher extends Node {
             else if(answer.equals("N")) {
                 sc.close();
                 client.stopthreads=true;
-                Value exitmes = new Value();
+                Value exitmes = new Value(client.getUsername());
                 push(exitmes);
                 try {
                     client.closeClient();
@@ -184,7 +171,6 @@ public class Publisher extends Node {
                 System.out.println("Invalid choice! Press y for yes n for no"); 
             }  
         }
-        //push(mes);
     }
 
     public void closee(){

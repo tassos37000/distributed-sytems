@@ -48,12 +48,7 @@ public class BrokerActionsForClient extends Thread {
                 out.flush();
                 return true;
             } else{ // Client doesn't change Broker
-                for(String j: broker.registerdTopicClients.keySet()){
-                    if (desiredTopic.equals(j)){
-                        topicalreadyin=true;
-                        break;
-                    }
-                }
+                topicalreadyin = broker.registerdTopicClients.containsKey(desiredTopic);
                 System.out.println("topicalreadyin: " + topicalreadyin);
                 if (!topicalreadyin){
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
@@ -83,7 +78,7 @@ public class BrokerActionsForClient extends Thread {
         int topicHash = topic.hashCode();
         int brokerNum = -1;
         for (int i=0; i<broker.brokerHash.size(); i++){
-            if (broker.brokerHash.get(i).getValue() < topicHash){ // -0 Might need < instead
+            if (broker.brokerHash.get(i).getValue() < topicHash){ 
                 brokerNum = i;
             }
         }
@@ -101,13 +96,16 @@ public class BrokerActionsForClient extends Thread {
                 
                 if (((Value)mes).getExit()){
                     System.out.println("[Broker]: Disconnecting Client..");
-                    this.closee();
+                    removeClient(((Value)mes).getSenter());
                     break;
                 }
 
                 System.out.println("[Broker]: Message Received: "+mes);
-                System.out.println(broker.registerdTopicClients.get(desiredTopic));
+                System.out.println("registered clients ("+desiredTopic+"):"+broker.registerdTopicClients.get(desiredTopic));
                 // Send to registered clients
+                if (((Value)mes).getMessage().equals("")){
+                    continue;
+                }
                 for (int z=0; z<broker.registerdTopicClients.get(desiredTopic).size(); z++){
                     String username = broker.registerdTopicClients.get(desiredTopic).get(z);
                     if (!username.equals(((Value)mes).getSenter())){
@@ -123,6 +121,29 @@ public class BrokerActionsForClient extends Thread {
         } catch (ClassNotFoundException classNFException) {
             classNFException.printStackTrace();
         } 
+    }
+
+    /**
+     * Remove client from Broker's lists and disconnect them.
+     * @param name client name to be disconnected
+     */
+    private void removeClient(String name){
+        System.out.println("[Broker]: Disconnecting Client \""+name+"\"");
+        broker.activeClients.remove(name);
+        if (broker.registerdTopicClients.containsKey(desiredTopic)) {
+            for (String c:broker.registerdTopicClients.get(desiredTopic)){
+                System.out.println("CLIENT: "+c);
+                if (c.equals(name)){
+                    System.out.println("Above Client shall be removed.");
+                    broker.registerdTopicClients.get(desiredTopic).remove(c);
+                    break;
+                }
+            }
+        }
+        // System.out.println("Senter to remove: "+name);
+        // System.out.println("ActiveClients: "+broker.activeClients);
+        // System.out.println("RegisteredTopicClients: "+broker.registerdTopicClients);
+        this.closee();
     }
 
     public void closee(){

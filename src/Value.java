@@ -22,7 +22,8 @@ public class Value implements Serializable, Comparable<Value>{
 
     }
 
-    public Value(){
+    public Value(String senter){
+        this.senter = senter;
         this.exit = true;
     }
 

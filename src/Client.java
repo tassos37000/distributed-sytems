@@ -15,6 +15,7 @@ public class Client extends Node {
     Thread publisher = null;
     public boolean stopthreads = false;
     public boolean Alivesocket= false;
+    String desiredTopic = null;
     Client() {
         address = getRandomBroker();
     }
@@ -42,17 +43,17 @@ public class Client extends Node {
                 requestSocket = new Socket(address.getIp(), address.getPort());
                 publisher = new Publisher(this);
                 consumer = new Consumer(this);
+                ((Publisher)publisher).push(new Value(this.getUsername(), desiredTopic, false, false)); 
             }
             Alivesocket = true;
             stopthreads = false;
 
             while(!stopthreads){
-                //System.out.println("2."+requestSocket.isClosed()); //-0
                 consumer.start();
-                //System.out.println("4."+requestSocket.isClosed()); //-0
-                ((Publisher)publisher).push(new Value(this.getUsername(), "", false, false)); // -0
+
+                ((Publisher)publisher).push(new Value(this.getUsername(), "", false, false)); 
                 publisher.start();
-                //System.out.println("6."+requestSocket.isClosed()); //-0
+
             }
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
@@ -72,7 +73,7 @@ public class Client extends Node {
     private boolean getTopicInfo(){
         Scanner sc = new Scanner(System.in);
         System.out.print("What topic would you like to access? ");
-        String topic = sc.nextLine();
+       desiredTopic = sc.nextLine();
         
         try {
             requestSocket = new Socket(address.getIp(), address.getPort());
@@ -80,7 +81,7 @@ public class Client extends Node {
             consumer = new Consumer(this);
                 
             if (requestSocket!=null){
-                Value message = new Value(this.username, topic, false, false);
+                Value message = new Value(this.username, desiredTopic, false, false);
                 ((Publisher)publisher).push(message);
                 String data[] = ((Consumer)consumer).register().split(" ");
                 if (data[0].equals("yes")){
@@ -89,7 +90,7 @@ public class Client extends Node {
                     int port = brokerAddresses.get(Integer.parseInt(data[1])).getPort();
                     address.setPort(port);
                     
-                    Value exitmes = new Value();
+                    Value exitmes = new Value(this.username);
                     ((Publisher)publisher).push(exitmes);
                     closeClient();
                     return true;
