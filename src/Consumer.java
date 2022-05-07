@@ -67,6 +67,7 @@ public class Consumer extends Node {
                                 fos.write(chunk.multimediaFile.getChunkData());
                             }
                             fos.close();
+                            System.out.println(chunksOfMess.get(0));
                         }
                         chunksOfMess.clear();
                         continue;

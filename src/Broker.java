@@ -18,6 +18,7 @@ public class Broker extends Node {
     ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
     HashMap<String ,BrokerActionsForClient> activeClients; // Username, connection with client 
     HashMap<String ,ArrayList<String>> registerdTopicClients; //Topic and registered Client 
+    HashMap<String, ArrayList<Value>> topicHistory;             // Topic name - Topic history
     Address address;
     ServerSocket brokerServerSocket;
     
@@ -30,8 +31,9 @@ public class Broker extends Node {
     public Broker(int num){
         this.brokerNum = num-1;
         this.address = brokerList.get(this.brokerNum);
-        this.activeClients = new HashMap<>();
-        this.registerdTopicClients = new HashMap<>();
+        this.activeClients          = new HashMap<>();
+        this.registerdTopicClients  = new HashMap<>();
+        this.topicHistory           = new HashMap<>();
 
         this.createLogFile("Broker"+(num)+"-log.txt");
         System.out.println("[Broker]: Broker log file created.");

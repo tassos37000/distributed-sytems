@@ -7,7 +7,7 @@ public class Value implements Serializable, Comparable<Value>{
     Boolean fromBroker = false;
     Boolean hasMultimediaFile = false;
     String senter = null;
-    boolean notification = false;
+    boolean notification = false; // Message with info from broker
 
     /**
      * Constructor

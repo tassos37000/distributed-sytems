@@ -68,6 +68,37 @@ public class BrokerActionsForClient extends Thread {
     }
 
     /**
+     * Sent message history to new client.
+     */
+    private void sentHistory(){
+        if (!broker.topicHistory.containsKey(desiredTopic)){
+            return;
+        }
+        for (Value message : broker.topicHistory.get(desiredTopic)){
+            try{
+                out.writeObject(message);
+                out.flush();
+            } catch (IOException ioe){
+                ioe.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Keep conversation history. Add new message to history.
+     * @param topic Conversation topic.
+     * @param message Message to be added.
+     */
+    private void addToHistory(String topic, Value message){
+        // If new topic (aka no message history) create
+        if (!broker.topicHistory.containsKey(topic)){
+            broker.topicHistory.put(topic, new ArrayList<>());
+        }
+        // Add message to history
+        broker.topicHistory.get(topic).add(message);
+    }
+
+    /**
      * Finds the appropriate broker to handle the topic
      * @param topic the topic name requested by the client
      * @return broker number responsible for topic
@@ -88,21 +119,25 @@ public class BrokerActionsForClient extends Thread {
         broker.writeToFile("[Broker]: Connection is made at port: " + connection.getPort(), true);
         try {
             firstConnect();
-            
+            sentHistory();
             while(true){
                 Object mes = in.readObject();
-                
+                // If exit message
                 if (((Value)mes).getExit()){
                     broker.writeToFile("[Broker]: Disconnecting Client...", true);
                     removeClient(((Value)mes).getSenter());
                     break;
                 }
-
+                // Add to log
                 broker.writeToFile("[Broker]: Message Received: "+mes, true);
-                // Send to registered clients
+                
                 if (((Value)mes).getMessage().equals("")){
                     continue;
                 }
+                
+                // Add message to topic history
+                addToHistory(desiredTopic, (Value)mes);
+                // Send to registered clients
                 for (int z=0; z<broker.registerdTopicClients.get(desiredTopic).size(); z++){
                     String username = broker.registerdTopicClients.get(desiredTopic).get(z);
                     if (!username.equals(((Value)mes).getSenter())){
