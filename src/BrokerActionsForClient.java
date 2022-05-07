@@ -47,7 +47,7 @@ public class BrokerActionsForClient extends Thread {
                 return true;
             } else{ // Client doesn't change Broker
                 topicalreadyin = broker.registerdTopicClients.containsKey(desiredTopic);
-                broker.writeToFile("[Broker]: Topic \"" + topicalreadyin + "\" already exists.", true);
+                broker.writeToFile("[Broker]: Topic \"" + desiredTopic + "\" already exists.", true);
                 if (!topicalreadyin){
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
                 }

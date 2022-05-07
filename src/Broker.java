@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javafx.util.Pair;
-import java.util.List;
+//import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Broker extends Node {
-    List<Publisher> registeredPublishers;
+    //List<Publisher> registeredPublishers;
     ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Address, Broker Hash
     ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
     ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
@@ -40,7 +40,7 @@ public class Broker extends Node {
 
     public void init(){
         calculateKeys();
-        connectToBrokers();
+        //connectToBrokers();
         openServer();
     }
 
