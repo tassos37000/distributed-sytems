@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
+
 import javafx.util.Pair;
 //import java.util.List;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+
 
 public class Broker extends Node {
     //List<Publisher> registeredPublishers;
@@ -21,6 +24,7 @@ public class Broker extends Node {
     HashMap<String, ArrayList<Value>> topicHistory;             // Topic name - Topic history
     Address address;
     ServerSocket brokerServerSocket;
+    ArrayList<Pair<Value, LocalDateTime>>topicStories;
     
     int brokerNum;  // Broker Number
 
@@ -34,6 +38,7 @@ public class Broker extends Node {
         this.activeClients          = new HashMap<>();
         this.registerdTopicClients  = new HashMap<>();
         this.topicHistory           = new HashMap<>();
+        this.topicStories           = new ArrayList<>();
 
         this.createLogFile("Broker"+(num)+"-log.txt");
         System.out.println("[Broker]: Broker log file created.");

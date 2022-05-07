@@ -115,63 +115,91 @@ public class Publisher extends Node {
     public void run(){
         Scanner sc = new Scanner(System.in);
         while (true){
-            System.out.println("Do you want to send a message? Press y for yes n for no"); 
-            String answer= sc.nextLine().toUpperCase();
-            if (answer.equals("Y")){
-                while (true){
-                    System.out.println("Press 't' to send a text ,'p' for a photo ,'v' for a video and 'b' to go back if u changed your mind");   
-                    String answer2= sc.nextLine().toUpperCase();
-                    if (answer2.equals("T")){
-                        System.out.println("Please type your text"); 
-                        String mytext =  sc.nextLine();
-                        Value mestext = new Value(client.getUsername(),mytext,false,false);
-                        push(mestext);
-                        break;
-                    }   
-                    else if (answer2.equals("P")){
-                        // jpg j5
-                        System.out.println("Please type your name of photo with its extension"); 
-                        String mytext =  sc.nextLine();
-                        Value photo = new Value(client.getUsername(),mytext,true,false);
-                        push(photo);
-                        break;
-                    }
-                    else if (answer2.equals("V")){
-                        //  .mp4
-                        System.out.println("Please type your name of video with its extension"); 
-                        String mytext =  sc.nextLine();
-                        Value mediaa = new Value(client.getUsername(),mytext,true,false);
-                        push(mediaa);
-                        break;
-                    }
-                    
-                    else if (answer2.equals("B")){
-                        break;
-                    }
-                    else{
-                        System.out.println("Invalid choice!");  
-                    }
-                    continue;
-                }     
-            }
-            else if(answer.equals("N")) {
-                client.writeToFile("[Publisher]: Client wants to disconnect.", false);
-                sc.close();
-                client.stopthreads=true;
-                Value exitmes = new Value(client.getUsername());
-                push(exitmes);
-                try {
-                    client.closeClient();
-                }catch (SocketException a){}
-                catch (IOException e) {
-                    e.printStackTrace();
+            if(!client.getdesiredTopic().equals("STORIES")){
+                System.out.println("Do you want to send a message? Press y for yes n for no"); 
+                String answer= sc.nextLine().toUpperCase();
+                if (answer.equals("Y")){
+                    while (true){
+                        System.out.println("Press 't' to send a text ,'m' for a mediafile (photo or video) and 'b' to go back if u changed your mind");   
+                        String answer2= sc.nextLine().toUpperCase();
+                        if (answer2.equals("T")){
+                            System.out.println("Please type your text"); 
+                            String mytext =  sc.nextLine();
+                            Value mestext = new Value(client.getUsername(),mytext,false,false);
+                            push(mestext);
+                            break;
+                        }   
+                        else if (answer2.equals("M")){
+                            System.out.println("Please type your name of the media file with its extension"); 
+                            String mytext = sc.nextLine();
+                            if (!(new File(mytext)).exists()){
+                                System.out.println("Your media file does not exist."); 
+                                continue;
+                            }
+                            Value mediaa = new Value(client.getUsername(),mytext,true,false);
+                            push(mediaa);
+                            break;
+                        }
+                        else if (answer2.equals("B")){
+                            break;
+                        }
+                        else{
+                            System.out.println("Invalid choice!");  
+                        }
+                        continue;
+                    }     
                 }
-                break;
+                else if(answer.equals("N")) {
+                    client.writeToFile("[Publisher]: Client wants to disconnect.", false);
+                    sc.close();
+                    client.stopthreads=true;
+                    Value exitmes = new Value(client.getUsername());
+                    push(exitmes);
+                    try {
+                        client.closeClient();
+                    }catch (SocketException a){}
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                else{
+                    System.out.println("Invalid choice! Press y for yes n for no"); 
+                }  
             }
             else{
-                System.out.println("Invalid choice! Press y for yes n for no"); 
-            }  
-        }
+                System.out.println("Type upload to upload a story type exit to exit from stories");
+                String answer3= sc.nextLine().toUpperCase();
+                if (answer3.equals("UPLOAD")){
+                    System.out.println("Please type your name of photo or video with its extension"); 
+                    String mytext =  sc.nextLine();
+                    if (!(new File(mytext)).exists()){
+                        System.out.println("Your media file does not exist."); 
+                        continue;
+                    }
+                    Value m = new Value(client.getUsername(),mytext,true,false);
+                    push(m);
+                    break;
+                }
+                else if (answer3.equals("EXIT")){
+                    client.writeToFile("[Publisher]: Client wants to disconnect.", false);
+                    sc.close();
+                    client.stopthreads=true;
+                    Value exitmes = new Value(client.getUsername());
+                    push(exitmes);
+                    try {
+                        client.closeClient();
+                    }catch (SocketException a){}
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                else{
+                    System.out.println("Invalid choice!");
+                }
+            }
+        }        
     }
 
     public void closee(){

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.ArrayList;
+import javafx.util.Pair;
+import java.time.LocalDateTime;
 
 public class BrokerActionsForClient extends Thread {
     ObjectInputStream in = null;
@@ -11,7 +13,7 @@ public class BrokerActionsForClient extends Thread {
     Socket connection = null;
     Broker broker = null;
     String desiredTopic = "";
-    
+   
 
     public BrokerActionsForClient(Broker broker, Socket connection) {
         this.broker = broker;
@@ -71,6 +73,25 @@ public class BrokerActionsForClient extends Thread {
      * Sent message history to new client.
      */
     private void sentHistory(){
+        if (desiredTopic.equals("STORIES")){
+            LocalDateTime timenow= LocalDateTime.now();
+            for (int i =0; i< broker.topicStories.size();i++){
+                if(!timenow.isAfter(broker.topicStories.get(i).getValue().plusSeconds(60))){
+                    try{
+                        out.writeObject(broker.topicStories.get(i).getKey());
+                        out.flush();
+                    } catch (IOException ioe){
+                        ioe.printStackTrace();
+                    }
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return;
+        }
         if (!broker.topicHistory.containsKey(desiredTopic)){
             return;
         }
@@ -86,16 +107,19 @@ public class BrokerActionsForClient extends Thread {
 
     /**
      * Keep conversation history. Add new message to history.
-     * @param topic Conversation topic.
      * @param message Message to be added.
      */
-    private void addToHistory(String topic, Value message){
+    private void addToHistory( Value message){
+        if (desiredTopic.equals("STORIES")){
+            broker.topicStories.add(new Pair<>(message, LocalDateTime.now()));
+            return;
+        }
         // If new topic (aka no message history) create
-        if (!broker.topicHistory.containsKey(topic)){
-            broker.topicHistory.put(topic, new ArrayList<>());
+        if (!broker.topicHistory.containsKey(desiredTopic)){
+            broker.topicHistory.put(desiredTopic, new ArrayList<>());
         }
         // Add message to history
-        broker.topicHistory.get(topic).add(message);
+        broker.topicHistory.get(desiredTopic).add(message);
     }
 
     /**
@@ -136,7 +160,7 @@ public class BrokerActionsForClient extends Thread {
                 }
                 
                 // Add message to topic history
-                addToHistory(desiredTopic, (Value)mes);
+                addToHistory((Value)mes);
                 // Send to registered clients
                 for (int z=0; z<broker.registerdTopicClients.get(desiredTopic).size(); z++){
                     String username = broker.registerdTopicClients.get(desiredTopic).get(z);

@@ -27,6 +27,8 @@ public class Client extends Node {
 
     public Socket getSocket(){ return requestSocket; }
 
+    public String getdesiredTopic(){return desiredTopic; }
+
     public Address getRandomBroker(){
         brokerAddresses = readAddresses();
         int rnd = new Random().nextInt(brokerAddresses.size());
@@ -75,8 +77,8 @@ public class Client extends Node {
      */
     private boolean getTopicInfo(){
         Scanner sc = new Scanner(System.in);
-        System.out.print("What topic would you like to access? ");
-       desiredTopic = sc.nextLine();
+        System.out.print("What topic would you like to access? Type Stories to see stories: ");
+        desiredTopic = sc.nextLine().toUpperCase();
         
         try {
             requestSocket = new Socket(address.getIp(), address.getPort());
