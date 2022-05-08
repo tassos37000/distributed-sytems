@@ -8,13 +8,17 @@ import javafx.util.Pair;
 import java.time.LocalDateTime;
 
 public class BrokerActionsForClient extends Thread {
-    ObjectInputStream in = null;
-    ObjectOutputStream out = null;
-    Socket connection = null;
-    Broker broker = null;
-    String desiredTopic = "";
+    ObjectInputStream in = null;    // Input Stream
+    ObjectOutputStream out = null;  // Output Stream
+    Socket connection = null;       // Socket responsible for connection
+    Broker broker = null;           // Broker responsible for handling the requests
+    String desiredTopic = "";       // Topic the client wants to access
    
-
+    /**
+     * Constructor for BrokerActionsForClient
+     * @param broker Broker responsible for the requests
+     * @param connection Socket handling the connection
+     */
     public BrokerActionsForClient(Broker broker, Socket connection) {
         this.broker = broker;
         this.connection = connection;
@@ -40,18 +44,19 @@ public class BrokerActionsForClient extends Thread {
             int manager = managerBroker(desiredTopic);
             broker.activeClients.put(receivedMes.getSenter(),this);
             Value message = null;
-            if (manager != broker.brokerNum){ // Client must change Broker
+            if (manager != broker.brokerNum){   // Client must change Broker
                 broker.writeToFile("[Broker]: Client must change broker.", true);
                 message = new Value("Broker"+broker.brokerNum, "yes "+manager, false, true);
                 message.setNotification(true);
                 out.writeObject(message);
                 out.flush();
                 return true;
-            } else{ // Client doesn't change Broker
+            } else{                             // Client doesn't change Broker
                 topicalreadyin = broker.registerdTopicClients.containsKey(desiredTopic);
-                broker.writeToFile("[Broker]: Topic \"" + desiredTopic + "\" already exists.", true);
                 if (!topicalreadyin){
                     broker.registerdTopicClients.put(desiredTopic, new ArrayList<>());
+                } else{
+                    broker.writeToFile("[Broker]: Topic \"" + desiredTopic + "\" already exists.", true);
                 }
                 broker.registerdTopicClients.get(desiredTopic).add(receivedMes.getSenter());
             }
@@ -59,7 +64,6 @@ public class BrokerActionsForClient extends Thread {
             message.setNotification(true);
             out.writeObject(message);
             out.flush();
-
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,10 +77,11 @@ public class BrokerActionsForClient extends Thread {
      * Sent message history to new client.
      */
     private void sentHistory(){
+        // Stories
         if (desiredTopic.equals("STORIES")){
             LocalDateTime timenow= LocalDateTime.now();
             for (int i =0; i< broker.topicStories.size();i++){
-                if(!timenow.isAfter(broker.topicStories.get(i).getValue().plusSeconds(60))){
+                if(!timenow.isAfter(broker.topicStories.get(i).getValue().plusSeconds(60))){ // only show stories created in the last 60 seconds
                     try{
                         out.writeObject(broker.topicStories.get(i).getKey());
                         out.flush();
@@ -92,6 +97,7 @@ public class BrokerActionsForClient extends Thread {
             }
             return;
         }
+        // Conversations
         if (!broker.topicHistory.containsKey(desiredTopic)){
             return;
         }
@@ -170,8 +176,7 @@ public class BrokerActionsForClient extends Thread {
                 }
                 
             }
- 
- 
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException classNFException) {
@@ -198,6 +203,9 @@ public class BrokerActionsForClient extends Thread {
         this.closee();
     }
 
+    /**
+     * Close connection with client and close streams
+     */
     public void closee(){
         try {
             if (!Objects.isNull(in)){
@@ -219,6 +227,10 @@ public class BrokerActionsForClient extends Thread {
         
     }
 
+    /**
+     * Sent message to client assigned
+     * @param mes Message to be sent
+     */
     public void push(Object mes){
         try {
             out.writeObject(mes);
@@ -227,7 +239,5 @@ public class BrokerActionsForClient extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-
     }
 }

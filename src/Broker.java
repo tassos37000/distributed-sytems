@@ -2,9 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
-
 import javafx.util.Pair;
-//import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,20 +11,18 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-
 public class Broker extends Node {
-    //List<Publisher> registeredPublishers;
-    ArrayList<Pair<Address,Integer>> brokerHash;    // Broker Address, Broker Hash
-    ArrayList<Pair<String,Integer>> topicHash;      // Topic Name, Topic Hash
-    ArrayList<Pair<Integer,Integer>> topicBroker;   // Topic Hash, Broker Hash
-    HashMap<String ,BrokerActionsForClient> activeClients; // Username, connection with client 
-    HashMap<String ,ArrayList<String>> registerdTopicClients; //Topic and registered Client 
-    HashMap<String, ArrayList<Value>> topicHistory;             // Topic name - Topic history
-    Address address;
-    ServerSocket brokerServerSocket;
-    ArrayList<Pair<Value, LocalDateTime>>topicStories;
     
-    int brokerNum;  // Broker Number
+    ArrayList<Pair<Address,Integer>> brokerHash;                // Broker Address - Broker Hash
+    ArrayList<Pair<String,Integer>> topicHash;                  // Topic Name - Topic Hash
+    ArrayList<Pair<Value,LocalDateTime>> topicStories;          // Story (Value object) - Time uploaded
+    HashMap<String,BrokerActionsForClient> activeClients;       // Username, connection with client 
+    HashMap<String,ArrayList<String>> registerdTopicClients;    // Topic and registered Client 
+    HashMap<String,ArrayList<Value>> topicHistory;              // Topic name - Topic history
+
+    Address address;                // Broker Address
+    ServerSocket brokerServerSocket;// Broker Server Socket
+    int brokerNum;                  // Broker Number
 
     /**
      * Constructor for Broker
@@ -45,12 +41,17 @@ public class Broker extends Node {
         this.writeToFile("[Broker]: Broker Initialized ("+address+")", true);
     }
 
+    /**
+     * Initialiser for brokers
+     */
     public void init(){
         calculateKeys();
-        //connectToBrokers();
         openServer();
     }
 
+    /**
+     * Opens Broker Server and waits for requests
+     */
     private void openServer(){
         try{
             brokerServerSocket = new ServerSocket(address.getPort());
@@ -72,48 +73,30 @@ public class Broker extends Node {
         }
     }
 
+    /**
+     * Calculate keys(hashcode) for brokers, sort brokers,
+     * and calculate hashes for pre-configed topics
+     */
     private void calculateKeys(){
+        // Get Broker addresses
         ArrayList<Address> brokerList = readAddresses();
         brokerHash = new ArrayList<>();
         for (Address ad : brokerList){
             brokerHash.add((new Pair<Address,Integer> (ad,(ad.getIp()+ad.getPort()).hashCode())));
         }
-        // Sort brokers
+        // Sort brokers by hash
         Collections.sort(brokerHash, new Comparator<Pair<Address, Integer>>() {
             @Override 
             public int compare(final Pair<Address, Integer> left, final Pair<Address, Integer> right) {
                 return left.getValue() - right.getValue();
             }
         });
+        // Get topic names and hashcodes
         ArrayList<String> topics = readTopics();
         topicHash = new ArrayList<>();
         for (String t : topics){
             topicHash.add((new Pair<String,Integer> (t, t.hashCode())));
         }
-        for (Pair<String,Integer> t : topicHash){
-            for (Pair<Address,Integer> b : brokerHash){
-                if (b.getValue() < t.getValue()){
-                    topicBroker.add((new Pair<Integer,Integer> (b.getValue(), t.getValue())));
-                }
-            }
-        }
-    }
-
-    /**
-     * Every Broker creates a connection (like a client would)
-     * for any broker that was created "before" them
-     * (see broker order in configuration)
-     */
-    private void connectToBrokers(){
-        try{
-            for (int i=0; i<this.brokerNum; i++){
-                Socket requestSocket = new Socket(brokerList.get(i).getIp(), brokerList.get(i).getPort());
-                Thread brokerThread = new BrokerActionsForClient(this, requestSocket);
-                brokerThread.start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }        
     }
 
     /**

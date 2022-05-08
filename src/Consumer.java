@@ -8,10 +8,17 @@ import java.util.Collections;
 import java.util.Objects;
 import java.net.SocketException;
 
+/**
+ * Consumer Class receives messages for Client
+ */
 public class Consumer extends Node {
     Client client = null;
     ObjectInputStream in = null;
 
+    /**
+     * Constructor for Consumer
+     * @param client Client responsible
+     */
     public Consumer(Client client){
         this.client = client;
         try {
@@ -21,8 +28,10 @@ public class Consumer extends Node {
         }
     }
 
-    public void disconnect(String str){}
-
+    /**
+     * Receive info for new connection from the randomly chosen broker
+     * @return message received
+     */
     public String register(){
         try{
             Value response = (Value)in.readObject();
@@ -35,6 +44,9 @@ public class Consumer extends Node {
         return "";
     }
 
+    /**
+     * Receive messages and show conversation on screen
+     */
     public synchronized void showConversationData(){
         try{
             ArrayList<Value> chunksOfMess = new ArrayList<>();
@@ -96,6 +108,9 @@ public class Consumer extends Node {
         }
     }
     
+    /**
+     * Close Input Stream
+     */
     public void closee(){
         try {
             if (!Objects.isNull(in)){

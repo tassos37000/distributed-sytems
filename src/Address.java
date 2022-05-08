@@ -1,7 +1,7 @@
 import java.io.Serializable;
 
 /**
- * Address represents a device address (ip, port)
+ * Address represents an address (ip, port)
  */
 public class Address implements Serializable {
 

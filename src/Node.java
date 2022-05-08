@@ -11,13 +11,6 @@ public class Node extends Thread {
     FileWriter logFile;
     BufferedWriter output;
 
-    public void connect(){}
-    public void disconnect(){}
-    public void init(int n){
-        this.connect();
-    }
-    public void updateNodes(){}
-
     /**
      * Helper method to read IP addresses and port number for brokers
      * from configuration file.
@@ -43,6 +36,11 @@ public class Node extends Thread {
         return addresses;
     }
 
+    /**
+     * Create new log file (if needed)
+     * @param name File name
+     * @return FileWriter object
+     */
     protected FileWriter createLogFile(String name){
         try {
             logFile = new FileWriter(name, false);
@@ -54,6 +52,11 @@ public class Node extends Thread {
         return logFile;
     }
 
+    /**
+     * Write info to log file
+     * @param info Info to be added
+     * @param print Whether to also print info on screen
+     */
     protected void writeToFile(String info, boolean print){
         try {
             if (print){
@@ -66,6 +69,9 @@ public class Node extends Thread {
         }
     }
 
+    /**
+     * Close File Input
+     */
     protected void closeFile(){
         try {
             output.close();

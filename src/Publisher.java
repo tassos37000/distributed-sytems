@@ -1,21 +1,26 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-import java.net.UnknownHostException;
+import java.util.Scanner;
 import java.io.ObjectOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Scanner;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
-
+/**
+ * Publisher Class sents messages for Client
+ */
 public class Publisher extends Node {
-    ProfileName profileName;
     Client client = null;
     ObjectOutputStream out = null;
     int sizeOfChunk = 1024 * 512;// 0.5MB = 512KB
 
+    /**
+     * Constructor for Publisher
+     * @param client Client responsible
+     */
     public Publisher(Client client){
         this.client = client;
         try {
@@ -25,11 +30,10 @@ public class Publisher extends Node {
         }
     }
 
-    ArrayList<Value> generateChunks(MultimediaFile mf){
-        ArrayList<Value> a = new ArrayList<Value>(); 
-        return a;
-    }
-
+    /**
+     * Sent message
+     * @param mes Message to be sent
+     */
     public synchronized void push(Value mes){
         try{
             if (Objects.isNull(mes)){
@@ -60,6 +64,11 @@ public class Publisher extends Node {
         }
     }
 
+    /**
+     * Handles Chunks for Text messages
+     * @param message text message
+     * @return arraylist of chunks
+     */
     public ArrayList<Value> chunkString(String message) {
         ArrayList<Value> chunks = new ArrayList<>();
         byte[] buffer;
@@ -81,6 +90,11 @@ public class Publisher extends Node {
         return chunks;
 	}	
 
+    /**
+     * Handles Chunks for Multimedia file messages
+     * @param fileName File name for multimedia file
+     * @return arraylist of chunks
+     */
     public ArrayList<Value> chunkMultimediaFile(String fileName) {
         ArrayList<Value> chunks = new ArrayList<>();
         byte[] buffer;
@@ -202,6 +216,9 @@ public class Publisher extends Node {
         }        
     }
 
+    /**
+     * Close Output stream
+     */
     public void closee(){
         try {
             if (!Objects.isNull(out)){

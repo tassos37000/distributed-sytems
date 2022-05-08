@@ -22,9 +22,11 @@ public class MultimediaFile implements Serializable {
     int chunkID;
     
     /**
-     * Constructor
-    */
-
+     * Constructor for MultimediaFile
+     * @param fileName File name
+     * @param buffer Buffer array of data
+     * @param chunkID Chunk number
+     */
     public MultimediaFile(String fileName, byte[] buffer, int chunkID) {
         this.multimediaFileName = fileName;
         String extension = "";
@@ -33,7 +35,7 @@ public class MultimediaFile implements Serializable {
             extension = fileName.substring(index + 1);
         }
 
-        if(!extension.equals("STRING")){
+        if(!extension.equals("STRING")){ // Not Text Message
             File m_file = new File(multimediaFileName);
             Path m_path = Paths.get(multimediaFileName);
             try {
@@ -44,14 +46,12 @@ public class MultimediaFile implements Serializable {
                 e1.printStackTrace();
             }
 
-            
-
-            if (extension.equals("mp4")){
+            if (extension.equals("mp4")){ // video
                 this.frameWidth = "";
                 this.frameHeight = "";
                 this.framerate = "";
             }
-            if (extension.equals("jpg") || extension.equals("jpeg")){
+            if (extension.equals("jpg") || extension.equals("jpeg")){ // image
                 BufferedImage img = null;
                 try {
                     img = ImageIO.read(m_file);

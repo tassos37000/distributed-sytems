@@ -121,7 +121,7 @@ public class Client extends Node {
             publisher = null;
             consumer = null;
             requestSocket = null;
-            
+
             this.writeToFile("[Client]: Socket closed.", false);
             this.writeToFile("[Client]: Client closed connection to broker.", false);
         } catch(SocketException e){
