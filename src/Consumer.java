@@ -74,7 +74,7 @@ public class Consumer extends Node {
                             baos.close();
                         }
                         else{
-                            FileOutputStream fos = new FileOutputStream("test"+chunksOfMess.get(0).message);
+                            FileOutputStream fos = new FileOutputStream(chunksOfMess.get(0).message);
                             for (Value chunk : chunksOfMess) {
                                 fos.write(chunk.multimediaFile.getChunkData());
                             }

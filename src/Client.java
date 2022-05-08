@@ -17,25 +17,33 @@ public class Client extends Node {
     public boolean stopthreads = false;
     public boolean Alivesocket= false;
     String desiredTopic = null;
+
+    /**
+     * Constructor for Client
+     */
     Client() {
         address = getRandomBroker();
         id = new Random().nextInt();
         this.createLogFile("Client"+id+".txt");
     }
-    
+
+    /**
+     * Getters
+     */
     public String getUsername(){ return username; }
-
     public Socket getSocket(){ return requestSocket; }
-
     public String getdesiredTopic(){return desiredTopic; }
+    public Socket getConnection(){ return requestSocket; }
 
+    /**
+     * Get random broekr address to connect to
+     * @return Broker Address to connect to
+     */
     public Address getRandomBroker(){
         brokerAddresses = readAddresses();
         int rnd = new Random().nextInt(brokerAddresses.size());
         return new Address(brokerAddresses.get(rnd).getIp(), brokerAddresses.get(rnd).getPort());
     }
-
-    public Socket getConnection() { return requestSocket; }
             
     @Override
     public void run() {
@@ -58,7 +66,6 @@ public class Client extends Node {
 
                 ((Publisher)publisher).push(new Value(this.getUsername(), "", false, false)); 
                 publisher.start();
-
             }
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
@@ -66,7 +73,6 @@ public class Client extends Node {
             ioException.printStackTrace();
         } catch (IllegalThreadStateException ithe){
         }
-        //sc.close();
     }
 
     /**
@@ -108,6 +114,10 @@ public class Client extends Node {
         return false;
     }
     
+    /**
+     * Close client connection to server and streams
+     * @throws IOException
+     */
     public void closeClient() throws IOException {
         try {
             this.writeToFile("[Client]: Attempting to close client..", false);
